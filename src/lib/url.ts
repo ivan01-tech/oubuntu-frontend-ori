@@ -1,7 +1,7 @@
 export const URLS = {
   USERS: {
     CREATE: "/users",
-    CREATE_LOGIN: "/createAndLogin",
+    CREATE_LOGIN: "/users/createAndLogin",
   },
   AUTH: {
     LOGIN: "/auth/login",

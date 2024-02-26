@@ -33,20 +33,6 @@ import { useUser } from "@/hooks/useUser";
 
 export default function SingUpAccount() {
   const { setUser } = useUser()!;
-  // Mutations
-  const {
-    mutate: mutateLogin,
-    isError: errorLog,
-    isPending: isPendLog,
-    data,
-    error,
-    isSuccess,
-  } = useMutation({
-    mutationFn: loginUser,
-    onError: () => {
-      toast.error(error?.message || "Something went wrong !  please try again");
-    },
-  });
 
   // state
 
@@ -97,8 +83,6 @@ export default function SingUpAccount() {
       );
     }
   };
-
-
 
   const facebookLogin = () => {
     if (typeof window !== "undefined") {
