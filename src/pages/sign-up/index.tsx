@@ -88,7 +88,7 @@ export default function SingUpAccount() {
   const googleAuthFoo = () => {
     if (typeof window !== "undefined") {
       window.open(
-        `${process.env.NEXT_PUBLIC_BACKEND_URI}/auth/google/callback`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URI}/auth/google`,
         "_self"
       );
     }
@@ -99,7 +99,7 @@ export default function SingUpAccount() {
   const facebookLogin = () => {
     if (typeof window !== "undefined") {
       window.open(
-        `${process.env.NEXT_PUBLIC_BACKEND_URI}/auth/facebook/callback`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URI}/auth/facebook`,
         "_self"
       );
     }
@@ -315,7 +315,7 @@ export default function SingUpAccount() {
                 className="p-3 text-white bg-blue-800  flex gap-3"
               >
                 <FaFacebookF />
-                <span> avec Facbook</span>
+                <span> avec Facebook</span>
               </Button>
             </div>
           </form>
