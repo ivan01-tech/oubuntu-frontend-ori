@@ -1,7 +1,7 @@
 "use client";
 import { BsGoogle } from "react-icons/bs";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { PhoneInput } from "react-international-phone";
 import "react-international-phone/style.css";
 import { FaFacebookF } from "react-icons/fa";
@@ -20,7 +20,11 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UserSignUpType, UserSignUp } from "@/model/UserSingUp";
 import { useMutation } from "@tanstack/react-query";
-import { createUser, createUserAndLogin, loginUser } from "@/services/users.services";
+import {
+  createUser,
+  createUserAndLogin,
+  loginUser,
+} from "@/services/users.services";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import { ButtonLoading } from "@/components/ui/LoadingBtn";
@@ -94,7 +98,7 @@ export default function SingUpAccount() {
     }
   };
 
-
+  
 
   const facebookLogin = () => {
     if (typeof window !== "undefined") {
