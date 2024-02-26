@@ -67,7 +67,7 @@ export default function SignInAccount() {
   const googleAuthFoo = () => {
     if (typeof window !== "undefined") {
       window.open(
-        `${process.env.NEXT_PUBLIC_BACKEND_URI}/auth/google/callback`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URI}/auth/google`,
         "_self"
       );
     }
