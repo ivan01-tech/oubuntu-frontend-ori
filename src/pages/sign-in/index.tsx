@@ -73,15 +73,15 @@ export default function SignInAccount() {
     }
   };
 
-
   const facebookLogin = () => {
     if (typeof window !== "undefined") {
       window.open(
-        `${process.env.NEXT_PUBLIC_BACKEND_URI}/auth/facebook/callback`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URI}/auth/facebook`,
         "_self"
       );
     }
   };
+
 
   useEffect(
     function () {
