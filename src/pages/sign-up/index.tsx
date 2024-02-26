@@ -235,7 +235,7 @@ export default function SingUpAccount() {
                 )}
               </div>
 
-              <div className="grid gap-2">
+              {/* <div className="grid gap-2">
                 <Label htmlFor="phone_number">
                   Numéro de téléphone{" "}
                   <span className="text-red-500 text-[.7rem]">*</span>
@@ -257,7 +257,7 @@ export default function SingUpAccount() {
                     {errors.phone_number.message}
                   </p>
                 )}
-              </div>
+              </div> */}
 
               {/* <div className="flex items-center space-x-2">
                 <Checkbox id="terms" />

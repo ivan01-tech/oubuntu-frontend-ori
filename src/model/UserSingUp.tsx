@@ -6,9 +6,9 @@ import { z, ZodError } from "zod";
 export const UserSignUp = z
   .object({
     first_name: z.string().min(4).max(15),
-    country_code: z.string(),
+    // country_code: z.string(),
     confirm_password: z.string(),
-    phone_number: z.string(),
+    // phone_number: z.string(),
     email: z
       .string()
       .refine((v) => EMAIL_REGEX.test(v), { message: "Invalid email format" }),
@@ -22,15 +22,15 @@ export const UserSignUp = z
   .refine((data) => data.password === data.confirm_password, {
     message: "Passwords do not match",
     path: ["confirm_password"], // path of error
-  })
-  .refine(
-    (data) =>
-      isValidPhoneNumber(data.phone_number, data.country_code as CountryCode),
-    {
-      message: "Ivalid phone number",
-      path: ["phone_number"], // path of error
-    }
-  );
+  });
+// .refine(
+//   (data) =>
+//     isValidPhoneNumber(data.phone_number, data.country_code as CountryCode),
+//   {
+//     message: "Ivalid phone number",
+//     path: ["phone_number"], // path of error
+//   }
+// );
 
 // Méthode pour transformer les erreurs Zod en un objet d'erreurs que vous pouvez utiliser dans le frontend
 export function transformZodError(error: ZodError) {
