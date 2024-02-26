@@ -1,7 +1,7 @@
 "use client";
 import { BsGoogle } from "react-icons/bs";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PhoneInput } from "react-international-phone";
 import "react-international-phone/style.css";
 import { FaFacebookF } from "react-icons/fa";
@@ -42,7 +42,9 @@ export default function SingUpAccount() {
   const {
     mutate,
     isError,
+    isSuccess,
     isPending,
+    error,
     data: dataSingUp,
   } = useMutation({
     mutationFn: createUserAndLogin,
@@ -64,10 +66,9 @@ export default function SingUpAccount() {
     resolver: zodResolver(UserSignUp),
   });
 
-  const handlerSubmitHelper = (user: UserSignUpType) => {
+  const handlerSubmitHelper = async (user: UserSignUpType) => {
     console.log("first form submission : ", user);
-    mutate(user);
-    router.push("/");
+    await mutate(user);
   };
 
   const onSubmit: SubmitHandler<UserSignUpType> = (user) => {
@@ -93,20 +94,29 @@ export default function SingUpAccount() {
     }
   };
 
-  // // login the user
   // TODO create a route for sign up and login
-  // useEffect(
-  //   function () {
-  //     mutateLogin({ email: dataSingUp?.data?.email });
-  //     if (!isSuccess) return;
-  //     console.log("data : ", data);
-  //     setUser(data.data);
+  useEffect(
+    function () {
+      if (!isSuccess) return;
 
-  //     router.push("/");
-  //     toast.success("Successfully authenticated !");
-  //   },
-  //   [isSuccess, data, router, setUser]
-  // );
+      console.log("data : ", dataSingUp);
+      setUser(dataSingUp.data);
+
+      toast.success("Successfully authenticated !");
+      router.push("/");
+    },
+    [isSuccess, dataSingUp, router, setUser]
+  );
+
+  // TODO create a route for sign up and login
+  useEffect(
+    function () {
+      if (!isError) return;
+
+      toast.error(error.message);
+    },
+    [error, isError]
+  );
 
   return (
     <>
