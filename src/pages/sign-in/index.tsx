@@ -76,7 +76,7 @@ export default function SignInAccount() {
   const facebookLogin = () => {
     if (typeof window !== "undefined") {
       window.open(
-        `${process.env.NEXT_PUBLIC_BACKEND_URI}/auth/facebook`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URI}/auth/facebook/callback`,
         "_self"
       );
     }
