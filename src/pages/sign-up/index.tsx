@@ -79,7 +79,7 @@ export default function SingUpAccount() {
   const googleAuthFoo = () => {
     if (typeof window !== "undefined") {
       window.open(
-        `${process.env.NEXT_PUBLIC_BACKEND_URI}/auth/google`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URI}/auth/google/callback`,
         "_self"
       );
     }
@@ -295,7 +295,7 @@ export default function SingUpAccount() {
                 </span>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-6 my-4 m-2">
+            <div className="grid grid-cols-1  smm:grid-cols-2 gap-6 my-4 m-2">
               <Button
                 type="button"
                 onClick={googleAuthFoo}
@@ -303,7 +303,7 @@ export default function SingUpAccount() {
                 className="p-3 flex gap-3"
               >
                 <BsGoogle className="mr-2 h-4  w-4 text-red" />
-                <span> avec Google</span>
+                <span>Continuer avec Google</span>
               </Button>
 
               <Button
@@ -313,7 +313,7 @@ export default function SingUpAccount() {
                 className="p-3 text-white bg-blue-800  flex gap-3"
               >
                 <FaFacebookF />
-                <span> avec Facebook</span>
+                <span>Continuer avec Facbook</span>
               </Button>
             </div>
           </form>

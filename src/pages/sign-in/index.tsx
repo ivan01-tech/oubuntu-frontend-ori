@@ -67,7 +67,7 @@ export default function SignInAccount() {
   const googleAuthFoo = () => {
     if (typeof window !== "undefined") {
       window.open(
-        `${process.env.NEXT_PUBLIC_BACKEND_URI}/auth/google`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URI}/auth/google/callback`,
         "_self"
       );
     }
@@ -181,7 +181,7 @@ export default function SignInAccount() {
                 </span>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-6 my-4 m-2">
+            <div className="grid grid-cols-1  smm:grid-cols-2 gap-6 my-4 m-2">
               <Button
                 type="button"
                 onClick={googleAuthFoo}
