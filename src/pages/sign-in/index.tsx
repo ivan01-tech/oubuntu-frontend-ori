@@ -163,7 +163,7 @@ export default function SignInAccount() {
               <p className="mt-2 text-xs text-center text-gray-700">
                 {"  Vous n'avez pas encore de compte ? "}
                 <Link
-                  href={"/log-in"}
+                  href={"/sign-up"}
                   className=" text-primary hover:underline"
                 >
                   Créez-en un ici.

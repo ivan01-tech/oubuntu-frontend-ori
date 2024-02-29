@@ -277,7 +277,7 @@ export default function SingUpAccount() {
               <p className="mt-2 text-xs text-center text-gray-700">
                 {"  Vous avez deja un compte ? "}
                 <Link
-                  href={"/log-in"}
+                  href={"/sign-in"}
                   className=" text-primary hover:underline"
                 >
                   Connecter vous ici

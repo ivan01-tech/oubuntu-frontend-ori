@@ -21,7 +21,6 @@ export default function App({ Component, pageProps }: AppProps) {
 
           <Component {...pageProps} />
 
-          <Toaster />
         </UserContextProvider>
       </QueryClientProvider>
     </ChakraProvider>

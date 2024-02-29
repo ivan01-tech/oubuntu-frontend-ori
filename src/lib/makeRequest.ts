@@ -4,6 +4,7 @@ import { RequestReturnLogin,  } from "@/types/users";
 
 export interface RequestRetturn {
   status: string;
+  message?: string;
   data: any;
 }
 /**

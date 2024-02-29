@@ -29,3 +29,10 @@ export async function getUserStatus() {
     method: "GET",
   });
 }
+
+
+export async function getStatusForGoogleLogin() {
+  return makeSucureRequest(URLS.AUTH.GET_STATUS_GOOGLE, {
+    method: "GET",
+  });
+}

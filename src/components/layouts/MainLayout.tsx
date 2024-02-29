@@ -9,6 +9,7 @@ import {
 } from "@tanstack/react-query";
 import { useUser } from "@/hooks/useUser";
 import { getUserStatus, loginUser } from "@/services/users.services";
+import { Toaster } from "react-hot-toast";
 const manrope = Manrope({ subsets: ["latin"] });
 
 type Props = {
@@ -45,6 +46,7 @@ const MainLayout = (props: Props) => {
     >
       <Navbar />
       <div className="flex flex-col  overflow-x-hidden">{props.children}</div>
+      <Toaster />
     </main>
   );
 };
