@@ -11,6 +11,7 @@ export const URLS = {
   PRODUCTS: {
     GET: "/products",
     SEARCH: "/products/search",
+    SEARCH_BY_NAME: "/products/search/name",
   },
 
   CATEGORIES: {

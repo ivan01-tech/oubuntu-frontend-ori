@@ -19,3 +19,10 @@ export async function searchProduct<Z>(params: any) {
     params,
   });
 }
+
+export async function searchProductByName<Z>(params: any) {
+  return makeSucureRequest<Z>(URLS.PRODUCTS.SEARCH_BY_NAME, {
+    method: "GET",
+    params,
+  });
+}

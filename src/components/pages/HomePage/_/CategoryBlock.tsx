@@ -13,7 +13,10 @@ const CategoryBlock: FC<CategoryBlackProps> = ({ image, label, category }) => {
   const { setselectedCategory } = useSearchProduct()!;
 
   const handleChangeSelectedCategory = () => {
-    setselectedCategory(category);
+    setselectedCategory((prev) => {
+      if (!prev) return [category];
+      else return [...prev, category];
+    });
   };
 
   return (

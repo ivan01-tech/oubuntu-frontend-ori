@@ -9,7 +9,8 @@ import { getUserStatus } from "@/services/users.services";
 import { useEffect } from "react";
 import { useUser } from "@/hooks/useUser";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { ProductContextProvider } from "@/context/productContext";
+// import { ProductContextProvider } from "@/context/productContext";
+import { SearchProductContextProvider } from "@/context/searchProductContext";
 
 const queryClient = new QueryClient();
 
@@ -17,13 +18,14 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <ChakraProvider>
       <QueryClientProvider client={queryClient}>
-        <ProductContextProvider>
+        {/* <ProductContextProvider> */}
+        <SearchProductContextProvider>
           <UserContextProvider>
             <ReactQueryDevtools initialIsOpen={false} />
-
             <Component {...pageProps} />
           </UserContextProvider>
-        </ProductContextProvider>
+        </SearchProductContextProvider>
+        {/* </ProductContextProvider> */}
       </QueryClientProvider>
     </ChakraProvider>
   );

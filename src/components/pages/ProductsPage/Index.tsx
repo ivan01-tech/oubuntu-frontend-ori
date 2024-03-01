@@ -15,10 +15,11 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { getAllProducts, searchProduct } from "@/services/products.services";
 import Image from "next/image";
 import { useSearchProduct } from "@/hooks/useProduct";
+import useDebouncedQuery from "@/hooks/useDebounce";
 
 // const randomComparator = () => Math.random() - 0.5;
 const ProductsPage: NextPage = ({}) => {
-  const { selectedCategory } = useSearchProduct()!;
+  const { selectedCategory, MinPrice, MaxPrice } = useSearchProduct()!;
 
   const {
     isSuccess: isSuccessP,
@@ -27,23 +28,24 @@ const ProductsPage: NextPage = ({}) => {
     isError: isErrP,
     mutate,
     error: errP,
-  } = useMutation({
-    mutationKey: ["productsSearch"],
-    mutationFn: searchProduct<Product[]>,
-  });
+  } = useDebouncedQuery(["productsSearch"], searchProduct<Product[]>, 500);
 
   useEffect(
     function () {
-      const params = {
-        category_id: selectedCategory?._id,
-      };
+      let params: Record<string, any> = {};
 
+      params.category_ids = selectedCategory
+        ? selectedCategory?.map((prev) => prev._id)
+        : [];
+      if (MaxPrice) params.maxPrice = MaxPrice;
+      if (MinPrice) params.minPrice = MinPrice;
+      console.log("options1 : ", params);
       mutate(params);
     },
-    [selectedCategory, mutate]
+    [selectedCategory, mutate, MinPrice, MaxPrice]
   );
 
-  console.log("data", dataP);
+  console.log("filter data1 : ", dataP);
 
   return (
     <div className="lg:grid flex flex-col space-y-2 grid-cols-5 gap-4 relative">

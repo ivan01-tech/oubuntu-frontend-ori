@@ -6,28 +6,43 @@ import { getAllCategories } from "@/services/products.services";
 import { useQuery } from "@tanstack/react-query";
 import { Spinner } from "@chakra-ui/react";
 import { useSearchProduct } from "@/hooks/useProduct";
+import { CheckedState } from "@radix-ui/react-checkbox";
 
 type Props = {
   className: string;
 };
 
 const Sidebar = (props: Props) => {
-  const { Category, setCategory } = useSearchProduct()!;
+  const {
+    setselectedCategory,
+    selectedCategory,
+    setMaxPrice,
+    MaxPrice,
+    MinPrice,
+    setMinPrice,
+  } = useSearchProduct()!;
   const { isSuccess, data, isLoading, isError, error } = useQuery({
     queryKey: ["categories"],
     queryFn: getAllCategories<Category[]>,
   });
 
-  const handdleChangeCategory = (catId: string) => {};
+  const handdleChangeCategory = (catId: string, isCheck: CheckedState) => {
+    // TODO should normaly be id
+    if (isCheck) {
+      const newCat = data?.find((prev) => prev._id == catId);
+      if (newCat)
+        setselectedCategory((prev) => {
+          if (!prev) return [newCat];
+          else return [...prev, newCat];
+        });
+    } else {
+      setselectedCategory((prev) => prev?.filter((c) => c._id !== catId));
+    }
+  };
 
-
-  // 
-  // useEffect(
-  //   function () {
-  //     if (isSuccess) setCategory(data);
-  //   },
-  //   [isSuccess, data, setCategory]
-  // );
+  const categoriesIds = selectedCategory
+    ? selectedCategory?.map((prev) => prev._id)
+    : [];
 
   return (
     <div className={` flex-col space-y-2 sticky top-0 flex`}>
@@ -54,8 +69,9 @@ const Sidebar = (props: Props) => {
               data.map((cat) => (
                 <div className="flex space-x-2 " key={cat._id}>
                   <Checkbox
+                    checked={categoriesIds.includes(cat._id)}
+                    onCheckedChange={(e) => handdleChangeCategory(cat._id, e)}
                     id={cat._id}
-                    onChange={() => handdleChangeCategory(cat._id)}
                   />
                   <p className="flex my-auto opacity-80 duration-300 hover:text-primary">
                     {cat.name}
@@ -205,13 +221,29 @@ const Sidebar = (props: Props) => {
           <p className="font-bold"> Rangée des prix </p>
           <div className="grid lg:grid-cols-1 grid-cols-2 gap-4">
             <div className="flex space-x-0 rounded relative ">
-              <Input type="number" placeholder="Montant min" className="" />
+              <Input
+                onChange={(e) => {
+                  setMinPrice(e.target.valueAsNumber);
+                }}
+                value={Number(MinPrice)}
+                type="number"
+                placeholder="Montant min"
+                className=""
+              />
               <div className="rounded-r absolute top-0 right-0 h-full bg-primary px-4 flex justify-center items-center text-white font-bold">
                 XAF
               </div>
             </div>
             <div className="flex space-x-0 rounded relative ">
-              <Input type="number" placeholder="Montant max" className="" />
+              <Input
+                onChange={(e) => {
+                  setMaxPrice(e.target.valueAsNumber);
+                }}
+                value={Number(MaxPrice)}
+                type="number"
+                placeholder="Montant max"
+                className=""
+              />
               <div className="rounded-r absolute top-0 right-0 h-full bg-primary px-4 flex justify-center items-center text-white font-bold">
                 XAF
               </div>

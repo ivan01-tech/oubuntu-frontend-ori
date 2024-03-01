@@ -1,7 +1,6 @@
-import { ProductContext } from "@/context/productContext";
-import { UserContext } from "@/context/userContext";
+import { SearchProductContext } from "@/context/searchProductContext";
 import { useContext } from "react";
 
 export const useSearchProduct = () => {
-  return useContext(ProductContext);
+  return useContext(SearchProductContext);
 };
