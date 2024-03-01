@@ -34,6 +34,7 @@ import Image from "next/image";
 import { FaFacebookF } from "react-icons/fa";
 import { PasswordInput } from "@/components/ui/PasswordInputShad";
 import CustomImage from "@/components/ui/image";
+import { UserTypes } from "@/types/users";
 
 export default function SignInAccount() {
   // state
@@ -42,7 +43,7 @@ export default function SignInAccount() {
 
   // Mutations
   const { mutate, isError, isPending, data, error, isSuccess } = useMutation({
-    mutationFn: loginUser,
+    mutationFn: loginUser<UserTypes>,
     onError: () => {
       toast.error(error?.message || "Something went wrong !  please try again");
     },
@@ -87,7 +88,7 @@ export default function SignInAccount() {
     function () {
       if (!isSuccess) return;
       console.log("data : ", data);
-      setUser(data.data);
+      setUser(data);
 
       router.push("/");
       toast.success("Successfully authenticated !");

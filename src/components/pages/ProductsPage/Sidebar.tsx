@@ -1,13 +1,34 @@
-import React from "react";
+import React, { useEffect } from "react";
 import SidebarFilterRow from "./_/SidebarFilterRow";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { getAllCategories } from "@/services/products.services";
+import { useQuery } from "@tanstack/react-query";
+import { Spinner } from "@chakra-ui/react";
+import { useSearchProduct } from "@/hooks/useProduct";
 
 type Props = {
   className: string;
 };
 
 const Sidebar = (props: Props) => {
+  const { Category, setCategory } = useSearchProduct()!;
+  const { isSuccess, data, isLoading, isError, error } = useQuery({
+    queryKey: ["categories"],
+    queryFn: getAllCategories<Category[]>,
+  });
+
+  const handdleChangeCategory = (catId: string) => {};
+
+
+  // 
+  // useEffect(
+  //   function () {
+  //     if (isSuccess) setCategory(data);
+  //   },
+  //   [isSuccess, data, setCategory]
+  // );
+
   return (
     <div className={` flex-col space-y-2 sticky top-0 flex`}>
       <p className="text-lg font-bold lg:block hidden"> Filtres </p>
@@ -16,7 +37,36 @@ const Sidebar = (props: Props) => {
       >
         <SidebarFilterRow title="Categories" value="category">
           <div className="flex flex-col space-y-2">
-            <div className="flex space-x-2 ">
+            {isLoading ? (
+              <div className=" flex justify-center items-center flex-col">
+                <Spinner
+                  thickness="4px"
+                  speed="0.65s"
+                  emptyColor="gray.200"
+                  color="blue.500"
+                  size="xl"
+                />
+                <p>Chargement des catégories</p>
+              </div>
+            ) : isError ? (
+              <p>{error.message}</p>
+            ) : data && data.length > 0 ? (
+              data.map((cat) => (
+                <div className="flex space-x-2 " key={cat._id}>
+                  <Checkbox
+                    id={cat._id}
+                    onChange={() => handdleChangeCategory(cat._id)}
+                  />
+                  <p className="flex my-auto opacity-80 duration-300 hover:text-primary">
+                    {cat.name}
+                  </p>
+                </div>
+              ))
+            ) : (
+              <p className="p-2">Aucune categorie trouver</p>
+            )}
+
+            {/* <div className="flex space-x-2 ">
               <Checkbox id="terms1" />
               <p className="flex my-auto opacity-80 duration-300 hover:text-primary">
                 {" "}
@@ -64,7 +114,7 @@ const Sidebar = (props: Props) => {
                 {" "}
                 Vins et Spiritieux{" "}
               </p>
-            </div>
+            </div> */}
           </div>
         </SidebarFilterRow>
         <SidebarFilterRow title="Quartier" value="neighborhood">

@@ -1,0 +1,30 @@
+{
+  "_id": "65e1ba1f654223c73389b364",
+  "name": "Product One",
+  "price": 1250,
+  "discount_price": "250",
+  "image_ext": "webp",
+  "created_by": {
+    "_id": "65df882ec4a39dd28bf8466c",
+    "first_name": "Carlos",
+    "email": "carloskakeusilatsa@gmail.com",
+    "last_name": "Silatsa",
+    "roles": ["USER"],
+    "googleId": "115938668927517961690",
+    "facebookId": null,
+    "picture": "https://lh3.googleusercontent.com/a/ACg8ocJN9rBKDCTRXyHKABDWxlbaO_7boTtRjkGv_8xMZ0GH=s96-c",
+    "created_at": "2024-02-28T19:23:26.016Z",
+    "__v": 0
+  },
+  "category_id": {
+    "_id": "65e1b9a2d50b1c52db63145f",
+    "name": "Poisson",
+    "link": null,
+    "image_ext": "webp",
+    "createdAt": "2024-03-01T11:18:58.217Z",
+    "updatedAt": "2024-03-01T11:18:58.229Z",
+    "__v": 0
+  },
+  "created_at": "2024-03-01T11:21:03.435Z",
+  "__v": 0
+}

@@ -10,5 +10,10 @@ export const URLS = {
   },
   PRODUCTS: {
     GET: "/products",
+    SEARCH: "/products/search",
+  },
+
+  CATEGORIES: {
+    GET: "/categories",
   },
 };

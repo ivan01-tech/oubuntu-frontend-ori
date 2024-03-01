@@ -14,6 +14,7 @@ type ProductSectionProps = {
   label: string;
   className: string;
   textcolor?: string;
+  data: Product[];
 };
 
 const products: ProductCardProps[] = [
@@ -101,23 +102,19 @@ const randomComparator = () => Math.random() - 0.5;
 const ProductSection: FC<ProductSectionProps> = ({
   label,
   className,
+  data,
   textcolor = "text-gray-800",
 }) => {
-  const { isSuccess, data, isLoading, isError, error } = useQuery({
-    queryKey: ["products"],
-    queryFn: getAllProducts,
-  });
+  // const { isSuccess, data, isLoading, isError, error } = useQuery({
+  //   queryKey: ["products"],
+  //   queryFn: getAllProducts,
+  // });
 
-  if (isLoading) {
-    return <p>Loading...</p>;
-  } else if (isError) {
-    return <p>{error.message}</p>;
-  }
-  console.log("data : ", data);
+  // console.log("data : ", data);
   return (
     <div className={`flex flex-col space-y-4 lg:py-6 py-3 ${className}`}>
       <p className={`font-bold lg:text-2xl text-lg ${textcolor}`}> {label} </p>
-      <div className="w-full lg:py-8 py-4">
+      <div className="w-full lg:py-8 py-4 flex justify-center">
         <Carousel
           opts={{
             align: "start",
@@ -126,7 +123,7 @@ const ProductSection: FC<ProductSectionProps> = ({
           className=" w-full "
         >
           <CarouselContent className=" w-full">
-            {[...products].sort(randomComparator).map((product, index) => (
+            {/* {[...products].sort(randomComparator).map((product, index) => (
               <CarouselItem key={index} className="basis-1/2 lg:basis-1/6">
                 <ProductCard
                   productImage={product.productImage}
@@ -136,6 +133,18 @@ const ProductSection: FC<ProductSectionProps> = ({
                     +(product.productReduction * 100).toFixed(2)
                   }
                   productCat={product.productCat}
+                />
+              </CarouselItem>
+            ))} */}
+
+            {data.sort(randomComparator).map((product, index) => (
+              <CarouselItem key={index} className="basis-1/2 lg:basis-1/6 flex justify-center">
+                <ProductCard
+                  productImage={`${process.env.NEXT_PUBLIC_BACKEND_URL}/files/${product._id}.${product.image_ext}`}
+                  productName={product.name}
+                  productPrice={product.price}
+                  productReduction={0.4}
+                  productCat={product.category_id.name}
                 />
               </CarouselItem>
             ))}
