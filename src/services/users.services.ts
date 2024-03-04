@@ -23,13 +23,13 @@ export async function loginUser<T>(data: Object) {
 }
 
 export async function getUserStatus<T>() {
-  return makeSucureRequest(URLS.AUTH.GET_STATUS, {
+  return makeSucureRequest<T>(URLS.AUTH.GET_STATUS, {
     method: "GET",
   });
 }
 
-export async function getStatusForGoogleLogin() {
-  return makeSucureRequest(URLS.AUTH.GET_STATUS_GOOGLE, {
+export async function getStatusForGoogleLogin<T>() {
+  return makeSucureRequest<T>(URLS.AUTH.GET_STATUS_GOOGLE, {
     method: "GET",
   });
 }

@@ -1,7 +1,6 @@
 import { useUser } from "@/hooks/useUser";
-import {
-  getStatusForGoogleLogin,
-} from "@/services/users.services";
+import { getStatusForGoogleLogin } from "@/services/users.services";
+import { UserTypes } from "@/types/users";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
@@ -15,24 +14,31 @@ function GetUserStatusAfterGoogleLogin({}: Props) {
 
   const { isSuccess, data, error } = useQuery({
     queryKey: ["getStatusAfterGoogleLogin"],
-    queryFn: getStatusForGoogleLogin,
+    queryFn: getStatusForGoogleLogin<UserTypes>,
   });
 
   useEffect(
     function () {
-      console.log("data : ", isSuccess, data);
-      if (!isSuccess) return;
-
-      if (data?.status.toLocaleLowerCase() == "success") {
-        setUser(data?.data);
-        toast.error(data.message || "");
-
-        router.push("/");
-      } else {
+      if (!isSuccess) {
         setUser(null);
-        toast.error(error);
-        router.push("/");
+        return;
       }
+      console.log("Main layout data : ", isSuccess, data);
+      setUser(data);
+
+      // console.log("data : ", isSuccess, data);
+      // if (!isSuccess) return;
+
+      // if (data?.status.toLocaleLowerCase() == "success") {
+      //   setUser(data?.data);
+      //   toast.error(data.message || "");
+
+      //   router.push("/");
+      // } else {
+      //   setUser(null);
+      //   toast.error(error);
+      //   router.push("/");
+      // }
     },
     [router, isSuccess, data, setUser, error]
   );

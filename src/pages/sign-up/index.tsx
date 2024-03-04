@@ -30,6 +30,7 @@ import { toast } from "react-hot-toast";
 import { ButtonLoading } from "@/components/ui/LoadingBtn";
 import Image from "next/image";
 import { useUser } from "@/hooks/useUser";
+import { UserTypes } from "@/types/users";
 
 export default function SingUpAccount() {
   const { setUser } = useUser()!;
@@ -47,7 +48,7 @@ export default function SingUpAccount() {
     error,
     data: dataSingUp,
   } = useMutation({
-    mutationFn: createUserAndLogin,
+    mutationFn: createUserAndLogin<UserTypes>,
     onSuccess: () => {
       router.push("/");
     },
@@ -97,12 +98,16 @@ export default function SingUpAccount() {
   // TODO create a route for sign up and login
   useEffect(
     function () {
-      if (!isSuccess) return;
+      if (!isSuccess) {
+        setUser(null);
+        toast.error("Something went wrong !");
 
-      console.log("data : ", dataSingUp);
-      setUser(dataSingUp.data);
+        return;
+      }
 
-      toast.success("Successfully authenticated !");
+      console.log("Main layout data : ", isSuccess, dataSingUp);
+      setUser(dataSingUp);
+      toast.success("success!");
       router.push("/");
     },
     [isSuccess, dataSingUp, router, setUser]

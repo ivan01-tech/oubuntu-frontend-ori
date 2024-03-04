@@ -9,7 +9,8 @@ import {
 } from "@tanstack/react-query";
 import { useUser } from "@/hooks/useUser";
 import { getUserStatus, loginUser } from "@/services/users.services";
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
+import { UserTypes } from "@/types/users";
 const manrope = Manrope({ subsets: ["latin"] });
 
 type Props = {
@@ -22,7 +23,7 @@ const MainLayout = (props: Props) => {
 
   const { isSuccess, data } = useQuery({
     queryKey: ["userStatus"],
-    queryFn: getUserStatus,
+    queryFn: getUserStatus<UserTypes>,
     // TODO set it late
     // refetchInterval: 5 * 1000,
     // refetchOnMount: "always",
@@ -33,10 +34,13 @@ const MainLayout = (props: Props) => {
     function () {
       if (!isSuccess) {
         setUser(null);
+        toast.error("Something went wrong !");
+
         return;
       }
       console.log("Main layout data : ", isSuccess, data);
       setUser(data);
+      toast.success("success!");
     },
     [isSuccess, data, setUser]
   );
@@ -46,8 +50,11 @@ const MainLayout = (props: Props) => {
       className={`flex min-h-screen flex-col overflow-x-hidden ${props.className} ${manrope.className}`}
     >
       <Navbar />
-      <div className="flex flex-col  overflow-x-hidden">{props.children}</div>
-      <Toaster />
+      <div className="flex flex-col  overflow-x-hidden">
+        {props.children}
+
+        <Toaster />
+      </div>
     </main>
   );
 };
