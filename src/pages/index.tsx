@@ -47,7 +47,7 @@ export default function Home() {
           </div>
         ) : isError ? (
           <p>{error.message}</p>
-        ) : data && data.length >= 0 ? (
+        ) : data && data.length > 0 ? (
           <CategoriesSliderComponent data={data} />
         ) : (
           <NoDataComp objectType="Catégorie" />
@@ -69,7 +69,7 @@ export default function Home() {
           </div>
         ) : isErrP ? (
           <p>{errP.message}</p>
-        ) : dataP && dataP.length >= 0 ? (
+        ) : dataP && dataP.length > 0 ? (
           <ProductSection
             className="bg-none lg:px-8 px-4"
             data={dataP}
@@ -92,13 +92,15 @@ export default function Home() {
           </div>
         ) : isErrP ? (
           <p>{errP.message}</p>
-        ) : dataP && dataP.length >= 0 ? (
+        ) : dataP && dataP.length > 0 ? (
           <ProductSection
             className="bg-white lg:px-8 px-4"
             data={dataP}
             label="Meilleures affaires"
           />
-        ) : null}
+        ) : (
+          <NoDataComp objectType="Produit" />
+        )}
         {isLodP ? (
           <div className=" flex justify-center items-center flex-col">
             <Spinner
@@ -112,14 +114,16 @@ export default function Home() {
           </div>
         ) : isErrP ? (
           <p>{errP.message}</p>
-        ) : dataP && dataP.length >= 0 ? (
+        ) : dataP && dataP.length > 0 ? (
           <ProductSection
             className="bg-gradient-to-r from-[#00765B] via-[#C81025]  to-[#F4CA15] lg:px-8 px-4"
             data={dataP}
             label="Made in cameroun"
             textcolor="text-white"
           />
-        ) : null}
+        ) : (
+          <NoDataComp objectType="Produit" />
+        )}
       </div>
       <OubuntuComponent />
     </MainLayout>

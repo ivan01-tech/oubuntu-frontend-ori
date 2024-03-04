@@ -21,24 +21,15 @@ function GetUserStatusAfterGoogleLogin({}: Props) {
     function () {
       if (!isSuccess) {
         setUser(null);
+        toast.error(error?.message || "Something went wrong");
         return;
       }
       console.log("Main layout data : ", isSuccess, data);
       setUser(data);
 
-      // console.log("data : ", isSuccess, data);
-      // if (!isSuccess) return;
+      toast.success("success!");
 
-      // if (data?.status.toLocaleLowerCase() == "success") {
-      //   setUser(data?.data);
-      //   toast.error(data.message || "");
-
-      //   router.push("/");
-      // } else {
-      //   setUser(null);
-      //   toast.error(error);
-      //   router.push("/");
-      // }
+      router.push("/");
     },
     [router, isSuccess, data, setUser, error]
   );
