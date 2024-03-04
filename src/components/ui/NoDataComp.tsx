@@ -12,7 +12,7 @@ function NoDataComp({ title, objectType }: Props) {
       <Image
         width={300}
         height={300}
-        src="/public/images/undraw_no_data_re_kwbl.svg"
+        src="/images/undraw_no_data_re_kwbl.svg"
         alt=" not found !"
       />
       <p>{`${objectType} non trouvé.`}</p>
