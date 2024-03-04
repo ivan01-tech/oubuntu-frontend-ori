@@ -36,7 +36,7 @@ export default function SingUpAccount() {
   const { setUser } = useUser()!;
 
   // state
-
+ 
   const [phone, setPhone] = useState("");
   const router = useRouter();
   // Mutations

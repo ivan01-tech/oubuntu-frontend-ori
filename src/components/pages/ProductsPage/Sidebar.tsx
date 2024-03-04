@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Spinner } from "@chakra-ui/react";
 import { useSearchProduct } from "@/hooks/useProduct";
 import { CheckedState } from "@radix-ui/react-checkbox";
+import NoDataComp from "@/components/ui/NoDataComp";
 
 type Props = {
   className: string;
@@ -79,7 +80,7 @@ const Sidebar = (props: Props) => {
                 </div>
               ))
             ) : (
-              <p className="p-2">Aucune categorie trouver</p>
+              <NoDataComp objectType="catégorie" />
             )}
 
             {/* <div className="flex space-x-2 ">

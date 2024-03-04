@@ -4,6 +4,7 @@ import CategoriesSliderComponent from "@/components/pages/HomePage/CategoriesSli
 import GroupsComponent from "@/components/pages/HomePage/GroupsComponent";
 import OubuntuComponent from "@/components/pages/HomePage/OubuntuComponent";
 import ProductSection from "@/components/pages/HomePage/ProductSection";
+import NoDataComp from "@/components/ui/NoDataComp";
 import { getAllCategories, getAllProducts } from "@/services/products.services";
 import { Spinner } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
@@ -48,7 +49,9 @@ export default function Home() {
           <p>{error.message}</p>
         ) : data && data.length >= 0 ? (
           <CategoriesSliderComponent data={data} />
-        ) : null}
+        ) : (
+          <NoDataComp objectType="Catégorie" />
+        )}
 
         <GroupsComponent />
       </div>
@@ -72,7 +75,9 @@ export default function Home() {
             data={dataP}
             label="Produits recommandés pour vous"
           />
-        ) : null}
+        ) : (
+          <NoDataComp objectType="Produit" />
+        )}
 
         {isLodP ? (
           <div className=" flex justify-center items-center flex-col">
