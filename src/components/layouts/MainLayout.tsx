@@ -31,11 +31,12 @@ const MainLayout = (props: Props) => {
 
   useEffect(
     function () {
-      console.log("data : ", isSuccess, data);
-      if (!isSuccess) return;
-      
-      if (data?.status.toLocaleLowerCase() == "success") setUser(data?.data);
-      else setUser(null);
+      if (!isSuccess) {
+        setUser(null);
+        return;
+      }
+      console.log("Main layout data : ", isSuccess, data);
+      setUser(data);
     },
     [isSuccess, data, setUser]
   );

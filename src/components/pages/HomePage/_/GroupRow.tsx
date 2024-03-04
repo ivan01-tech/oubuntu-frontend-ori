@@ -16,7 +16,7 @@ const GroupRow = (props: Props) => {
           <p className=" text-md  font-display opacity-90"> 3200 XAF </p>
           <p className="text-sm text-red-600"> 20kg restants </p>
         </div>
-        <span className="flex flex-col space-y-2">
+        <div className="flex flex-col space-y-2">
           <p className="flex justify-end text-right text-xs opacity-70">
             {" "}
             Douala{" "}
@@ -34,7 +34,7 @@ const GroupRow = (props: Props) => {
               54s
             </div>
           </div>
-        </span>
+        </div>
       </div>
       <Progress value={54} />
       <div className="pb-2">

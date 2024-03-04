@@ -66,7 +66,7 @@ const Navbar = (props: Props) => {
           </div>
           <SearchBar />
           <Link
-            href=""
+            href="/products"
             className="flex my-auto duration-200 hover:text-secondary"
           >
             <p> Catégories </p>
