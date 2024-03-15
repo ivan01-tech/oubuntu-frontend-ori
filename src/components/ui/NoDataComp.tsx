@@ -3,12 +3,12 @@ import React from "react";
 
 type Props = {
   title?: string;
-  objectType?: string;
+  objectType: string;
 };
 
 function NoDataComp({ title, objectType }: Props) {
   return (
-    <div className="w-full flex justify-center items-center gap-4 font-bold text-xl flex-col my-4 mx-2">
+    <div className="mx-2 my-4 flex w-full flex-col items-center justify-center gap-4 text-xl font-bold">
       <Image
         width={300}
         height={300}
