@@ -2,7 +2,6 @@ import MainLayout from "@/components/layouts/MainLayout";
 import OubuntuComponent from "@/components/pages/HomePage/OubuntuComponent";
 import CustomImage from "@/components/ui/image";
 import { Progress } from "@/components/ui/progress";
-import { useUser } from "@/hooks/useUser";
 import { Avatar } from "@chakra-ui/react";
 
 import React from "react";
@@ -10,13 +9,6 @@ import React from "react";
 type Props = {};
 
 function ProductDeatilsPage({}: Props) {
-  const { user } = useUser()!;
-
-  const joingroupeHandler = function () {
-    if (!user) {
-    }
-  };
-
   return (
     <MainLayout className="">
       <div className="flex flex-col lg:p-8 p-4">
@@ -88,7 +80,6 @@ function ProductDeatilsPage({}: Props) {
                 <div className="flex flex-wrap justify-center gap-4 mt-1">
                   <button
                     type="button"
-                    onClick={joingroupeHandler}
                     className="min-w-[200px] px-4 py-3 bg-primary hover:bg-primary/80 text-white text-sm font-bold rounded w-full max-w-[350px] m-auto mt-1"
                   >
                     Integrer le groupe

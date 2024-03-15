@@ -8,7 +8,7 @@ import {
 import CategoryBlock from "./_/CategoryBlock";
 
 type Props = {
-  data: Category[];
+  data?: Category[];
 };
 
 const CategoriesSliderComponent = ({ data }: Props) => {
@@ -23,7 +23,7 @@ const CategoriesSliderComponent = ({ data }: Props) => {
         className=" w-full "
       >
         <CarouselContent className="w-full flex justify-center">
-          {data.map((prev) => {
+          {/* {data.map((prev) => {
             return (
               <CarouselItem className="basis-1/3 lg:basis-1/6" key={prev._id}>
                 <CategoryBlock
@@ -33,8 +33,8 @@ const CategoriesSliderComponent = ({ data }: Props) => {
                 />
               </CarouselItem>
             );
-          })}
-          {/* <CarouselItem className="basis-1/3 lg:basis-1/6">
+          })} */}
+          <CarouselItem className="basis-1/3 lg:basis-1/6">
             <CategoryBlock
               image="/images/categories/conserve.webp"
               label="Produits en conserve"
@@ -69,7 +69,7 @@ const CategoriesSliderComponent = ({ data }: Props) => {
               image="/images/categories/vins.webp"
               label="Vins et Spiritieux"
             />
-          </CarouselItem> */}
+          </CarouselItem>
         </CarouselContent>
         <CarouselPrevious className="-left-4 shadow-md border-none hover:bg-white hover:bg-opacity-75 bg-white duration-300 hover:shadow-lg" />
         <CarouselNext className="-right-4  shadow-md border-none hover:bg-white hover:bg-opacity-75 bg-white duration-300 hover:shadow-lg" />

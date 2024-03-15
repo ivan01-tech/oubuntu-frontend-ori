@@ -6,7 +6,7 @@ import React, { FC } from "react";
 type CategoryBlackProps = {
   image: string;
   label: string;
-  category: Category;
+  category?: Category;
 };
 
 const CategoryBlock: FC<CategoryBlackProps> = ({ image, label, category }) => {

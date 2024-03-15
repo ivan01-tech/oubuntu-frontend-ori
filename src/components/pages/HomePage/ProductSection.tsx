@@ -14,7 +14,7 @@ type ProductSectionProps = {
   label: string;
   className: string;
   textcolor?: string;
-  data: Product[];
+  data?: Product[];
 };
 
 const products: ProductCardProps[] = [
@@ -102,7 +102,6 @@ const randomComparator = () => Math.random() - 0.5;
 const ProductSection: FC<ProductSectionProps> = ({
   label,
   className,
-  data,
   textcolor = "text-gray-800",
 }) => {
   // const { isSuccess, data, isLoading, isError, error } = useQuery({
@@ -123,7 +122,7 @@ const ProductSection: FC<ProductSectionProps> = ({
           className=" w-full "
         >
           <CarouselContent className=" w-full">
-            {/* {[...products].sort(randomComparator).map((product, index) => (
+            {[...products].sort(randomComparator).map((product, index) => (
               <CarouselItem key={index} className="basis-1/2 lg:basis-1/6">
                 <ProductCard
                   productImage={product.productImage}
@@ -135,10 +134,13 @@ const ProductSection: FC<ProductSectionProps> = ({
                   productCat={product.productCat}
                 />
               </CarouselItem>
-            ))} */}
-
+            ))}
+            {/* 
             {data.sort(randomComparator).map((product, index) => (
-              <CarouselItem key={index} className="basis-1/2 lg:basis-1/6 flex justify-center">
+              <CarouselItem
+                key={index}
+                className="basis-1/2 lg:basis-1/6 flex justify-center"
+              >
                 <ProductCard
                   productImage={`${process.env.NEXT_PUBLIC_BACKEND_URL}/files/${product._id}.${product.image_ext}`}
                   productName={product.name}
@@ -147,7 +149,7 @@ const ProductSection: FC<ProductSectionProps> = ({
                   productCat={product.category_id.name}
                 />
               </CarouselItem>
-            ))}
+            ))} */}
           </CarouselContent>
           <CarouselPrevious className="-left-4 shadow-md border-none hover:bg-white hover:bg-opacity-75 bg-white duration-300 hover:shadow-lg" />
           <CarouselNext className="-right-4  shadow-md border-none hover:bg-white hover:bg-opacity-75 bg-white duration-300 hover:shadow-lg" />
