@@ -17,4 +17,8 @@ export const URLS = {
   CATEGORIES: {
     GET: "/categories",
   },
+
+  GROUPS: {
+    GET: "/groups",
+  },
 };

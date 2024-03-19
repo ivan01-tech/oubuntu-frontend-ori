@@ -5,7 +5,11 @@ import GroupsComponent from "@/components/pages/HomePage/GroupsComponent";
 import OubuntuComponent from "@/components/pages/HomePage/OubuntuComponent";
 import ProductSection from "@/components/pages/HomePage/ProductSection";
 import NoDataComp from "@/components/ui/NoDataComp";
-import { getAllCategories, getAllProducts } from "@/services/products.services";
+import {
+  getAllCategories,
+  getAllGroupes,
+  getAllProducts,
+} from "@/services/products.services";
 import { Spinner } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
@@ -14,6 +18,16 @@ export default function Home() {
   const { isSuccess, data, isLoading, isError, error } = useQuery({
     queryKey: ["categories"],
     queryFn: getAllCategories<Category[]>,
+  });
+  const {
+    isSuccess: isSuccessG,
+    data: dataG,
+    isLoading: isLodG,
+    isError: isErrG,
+    error: errG,
+  } = useQuery({
+    queryKey: ["groupes"],
+    queryFn: getAllGroupes<Group[]>,
   });
 
   const {
@@ -27,8 +41,8 @@ export default function Home() {
     queryFn: getAllProducts<Product[]>,
   });
 
-  // useEffect()
-  console.log("category : ", data);
+  console.log("dataG : ", dataG);
+
   return (
     <MainLayout className="">
       <div className="flex flex-col lg:p-8 p-4">
@@ -53,7 +67,24 @@ export default function Home() {
           <NoDataComp objectType="Catégorie" />
         )}
 
-        <GroupsComponent />
+        {isLodG ? (
+          <div className=" flex justify-center items-center flex-col">
+            <Spinner
+              thickness="4px"
+              speed="0.65s"
+              emptyColor="gray.200"
+              color="blue.500"
+              size="xl"
+            />
+            <p>Chargement des catégories</p>
+          </div>
+        ) : isErrG ? (
+          <p>{errG.message}</p>
+        ) : dataG && dataG.length > 0 ? (
+          <GroupsComponent groups={dataG} />
+        ) : (
+          <NoDataComp objectType="Groupe" />
+        )}
       </div>
       <div className="bg-gray-100 flex flex-col space-y-4">
         {isLodP ? (

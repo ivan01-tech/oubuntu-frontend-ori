@@ -13,6 +13,12 @@ export async function getAllCategories<Z>() {
   });
 }
 
+export async function getAllGroupes<Z>() {
+  return makeSucureRequest<Z>(URLS.GROUPS.GET, {
+    method: "GET",
+  });
+}
+
 export async function searchProduct<Z>(params: any) {
   return makeSucureRequest<Z>(URLS.PRODUCTS.SEARCH, {
     method: "GET",
