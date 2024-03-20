@@ -19,6 +19,18 @@ export async function getAllGroupes<Z>() {
   });
 }
 
+export async function getGroudById<Z>(groupeId: string | null) {
+  if (groupeId === null) {
+    console.log("err");
+
+    throw new Error("Invalid groud id provided!");
+  }
+  console.log("passed");
+  return makeSucureRequest<Z>(URLS.GROUPS.ID(groupeId), {
+    method: "GET",
+  });
+}
+
 export async function searchProduct<Z>(params: any) {
   return makeSucureRequest<Z>(URLS.PRODUCTS.SEARCH, {
     method: "GET",

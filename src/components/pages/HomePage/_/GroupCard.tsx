@@ -4,6 +4,7 @@ import { Progress } from "@/components/ui/progress";
 import { Avatar, AvatarGroup } from "@chakra-ui/react";
 import Link from "next/link";
 import { UserTypes } from "@/types/users";
+import { Group } from "@/types/grupes";
 
 export type GroupCardProps = {
   productImage: string;
@@ -11,6 +12,7 @@ export type GroupCardProps = {
   productPrice: number;
   productReduction: number;
   progression: number;
+  group: Group;
   maxNumbers: number;
   discount: number;
   members?: UserTypes[];
@@ -20,6 +22,7 @@ const GroupCard: FC<GroupCardProps> = ({
   productImage,
   productName,
   productPrice,
+  group,
   productReduction,
   maxNumbers,
   progression,
@@ -28,7 +31,7 @@ const GroupCard: FC<GroupCardProps> = ({
 }) => {
   return (
     <Link
-      href="/"
+      href={"/groupes" + "/" + group._id}
       className="flex flex-col  bg-white text-gray-800 space-y-1 rounded-xl shadow duration-200 hover:shadow-md"
     >
       <CustomImage

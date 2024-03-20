@@ -10,6 +10,7 @@ import {
   getAllGroupes,
   getAllProducts,
 } from "@/services/products.services";
+import { Group } from "@/types/grupes";
 import { Spinner } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";

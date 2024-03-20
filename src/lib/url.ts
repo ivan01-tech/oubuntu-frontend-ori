@@ -20,5 +20,6 @@ export const URLS = {
 
   GROUPS: {
     GET: "/groups",
+    ID: (id: string) => "/groups/" + id,
   },
 };

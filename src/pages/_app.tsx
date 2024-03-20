@@ -12,7 +12,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 // import { ProductContextProvider } from "@/context/productContext";
 import { SearchProductContextProvider } from "@/context/searchProductContext";
 
-const queryClient = new QueryClient();
+export const queryClient = new QueryClient();
 
 export default function App({ Component, pageProps }: AppProps) {
   return (

@@ -144,6 +144,7 @@ const GroupsComponent = ({ groups }: Props) => {
                       group.offers[0].product_id._id,
                       group.offers[0].product_id.image_ext
                     )}
+                    group={group}
                     productName={group.offers[0].product_id.name}
                     productPrice={group.offers[0].discount_price}
                     discount={group.offers[0].price}
