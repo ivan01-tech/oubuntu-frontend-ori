@@ -20,6 +20,12 @@ export const URLS = {
 
   GROUPS: {
     GET: "/groups",
+    JOIN: (id: string) => "/groups/" + id + "/groupMenbers",
     ID: (id: string) => "/groups/" + id,
   },
 };
+// const OUBUNTU_BACKEND_URI_GRP = `${
+//   process.env.OUBUNTU_BACKEND_URI as string
+// }/groups`;
+
+// const link = `${OUBUNTU_BACKEND_URI_GRP}/${this._id}/groupMenbers`;

@@ -31,6 +31,21 @@ export async function getGroudById<Z>(groupeId: string | null) {
   });
 }
 
+export async function joinAGroup<Z>({
+  groupeId,
+  offerId,
+  quantity,
+}: {
+  groupeId: string;
+  offerId: string;
+  quantity: number;
+}) {
+  return makeSucureRequest<Z>(URLS.GROUPS.JOIN(groupeId), {
+    method: "POST",
+    data: { offerId, quantity },
+  });
+}
+
 export async function searchProduct<Z>(params: any) {
   return makeSucureRequest<Z>(URLS.PRODUCTS.SEARCH, {
     method: "GET",

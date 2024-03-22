@@ -44,9 +44,6 @@ export default function SignInAccount() {
   // Mutations
   const { mutate, isError, isPending, data, error, isSuccess } = useMutation({
     mutationFn: loginUser<UserTypes>,
-    onError: () => {
-      toast.error(error?.message || "Something went wrong !  please try again");
-    },
   });
 
   const {
@@ -83,17 +80,30 @@ export default function SignInAccount() {
     }
   };
 
+  useEffect(
+    function () {
+      if (isSuccess) {
+        console.log("data : ", data);
+        setUser(data);
+
+        router.back();
+        toast.success("Successfully authenticated !");
+      }
+    },
+    [isSuccess, data, router, setUser]
+  );
 
   useEffect(
     function () {
-      if (!isSuccess) return;
-      console.log("data : ", data);
-      setUser(data);
-
-      router.push("/");
-      toast.success("Successfully authenticated !");
+      if (isError) {
+        toast.error(
+          error?.message || "Something went wrong !  please try again"
+        );
+        setUser(null);
+        return;
+      }
     },
-    [isSuccess, data, router, setUser]
+    [isError, setUser]
   );
 
   return (
