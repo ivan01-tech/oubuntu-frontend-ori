@@ -17,85 +17,85 @@ type ProductSectionProps = {
   data: Product[];
 };
 
-const products: ProductCardProps[] = [
-  {
-    productImage: "/images/products/1.jpg",
-    productName: "Bananes",
-    productPrice: 5000,
-    productReduction: 0.1,
-    productCat: "Fruits",
-  },
-  {
-    productImage: "/images/products/2.jpg",
-    productName: "Tomates",
-    productPrice: 3500,
-    productReduction: 0.05,
-    productCat: "Légumes",
-  },
-  {
-    productImage: "/images/products/2.png",
-    productName: "Riz Basmati",
-    productPrice: 8000,
-    productReduction: 0.15,
-    productCat: "Céréales",
-  },
-  {
-    productImage: "/images/products/3.png",
-    productName: "Filet de Poulet",
-    productPrice: 12000,
-    productReduction: 0.2,
-    productCat: "Viandes",
-  },
-  {
-    productImage: "/images/products/4.jpg",
-    productName: "Saumon frais",
-    productPrice: 18000,
-    productReduction: 0.12,
-    productCat: "Poissons",
-  },
-  {
-    productImage: "/images/products/5.png",
-    productName: "Courgettes",
-    productPrice: 3000,
-    productReduction: 0.08,
-    productCat: "Légumes",
-  },
-  {
-    productImage: "/images/products/6.png",
-    productName: "Mangues",
-    productPrice: 6000,
-    productReduction: 0.18,
-    productCat: "Fruits",
-  },
-  {
-    productImage: "/images/products/7.jpg",
-    productName: "Quinoa",
-    productPrice: 10000,
-    productReduction: 0.1,
-    productCat: "Céréales",
-  },
-  {
-    productImage: "/images/products/8.jpg",
-    productName: "Steak de Bœuf",
-    productPrice: 15000,
-    productReduction: 0.15,
-    productCat: "Viandes",
-  },
-  {
-    productImage: "/images/products/9.jpg",
-    productName: "Thon en conserve",
-    productPrice: 7500,
-    productReduction: 0.07,
-    productCat: "Poissons",
-  },
-  {
-    productImage: "/images/products/10.jpg",
-    productName: "Ananas",
-    productPrice: 4500,
-    productReduction: 0.2,
-    productCat: "Fruits",
-  },
-];
+// const products: ProductCardProps[] = [
+//   {
+//     productImage: "/images/products/1.jpg",
+//     productName: "Bananes",
+//     productPrice: 5000,
+//     productReduction: 0.1,
+//     productCat: "Fruits",
+//   },
+//   {
+//     productImage: "/images/products/2.jpg",
+//     productName: "Tomates",
+//     productPrice: 3500,
+//     productReduction: 0.05,
+//     productCat: "Légumes",
+//   },
+//   {
+//     productImage: "/images/products/2.png",
+//     productName: "Riz Basmati",
+//     productPrice: 8000,
+//     productReduction: 0.15,
+//     productCat: "Céréales",
+//   },
+//   {
+//     productImage: "/images/products/3.png",
+//     productName: "Filet de Poulet",
+//     productPrice: 12000,
+//     productReduction: 0.2,
+//     productCat: "Viandes",
+//   },
+//   {
+//     productImage: "/images/products/4.jpg",
+//     productName: "Saumon frais",
+//     productPrice: 18000,
+//     productReduction: 0.12,
+//     productCat: "Poissons",
+//   },
+//   {
+//     productImage: "/images/products/5.png",
+//     productName: "Courgettes",
+//     productPrice: 3000,
+//     productReduction: 0.08,
+//     productCat: "Légumes",
+//   },
+//   {
+//     productImage: "/images/products/6.png",
+//     productName: "Mangues",
+//     productPrice: 6000,
+//     productReduction: 0.18,
+//     productCat: "Fruits",
+//   },
+//   {
+//     productImage: "/images/products/7.jpg",
+//     productName: "Quinoa",
+//     productPrice: 10000,
+//     productReduction: 0.1,
+//     productCat: "Céréales",
+//   },
+//   {
+//     productImage: "/images/products/8.jpg",
+//     productName: "Steak de Bœuf",
+//     productPrice: 15000,
+//     productReduction: 0.15,
+//     productCat: "Viandes",
+//   },
+//   {
+//     productImage: "/images/products/9.jpg",
+//     productName: "Thon en conserve",
+//     productPrice: 7500,
+//     productReduction: 0.07,
+//     productCat: "Poissons",
+//   },
+//   {
+//     productImage: "/images/products/10.jpg",
+//     productName: "Ananas",
+//     productPrice: 4500,
+//     productReduction: 0.2,
+//     productCat: "Fruits",
+//   },
+// ];
 
 const randomComparator = () => Math.random() - 0.5;
 
@@ -138,12 +138,16 @@ const ProductSection: FC<ProductSectionProps> = ({
             ))} */}
 
             {data.sort(randomComparator).map((product, index) => (
-              <CarouselItem key={index} className="basis-1/2 lg:basis-1/6 flex justify-center">
+              <CarouselItem
+                key={index}
+                className="basis-1/2 lg:basis-1/6 flex justify-center"
+              >
                 <ProductCard
-                  productImage={`${process.env.NEXT_PUBLIC_BACKEND_URL}/files/${product._id}.${product.image_ext}`}
+                  productImage={`${process.env.NEXT_PUBLIC_BACKEND_URL}/images/${product._id}.${product.image_ext}`}
                   productName={product.name}
                   productPrice={product.price}
                   productReduction={0.4}
+                  product={product}
                   productCat={product.category_id.name}
                 />
               </CarouselItem>

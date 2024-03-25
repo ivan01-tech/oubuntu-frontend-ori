@@ -89,10 +89,11 @@ const ProductsPage: NextPage = ({}) => {
           {dataP.map((product, index) => (
             <ProductCard
               key={product._id}
-              productImage={`${process.env.NEXT_PUBLIC_BACKEND_URL}/files/${product._id}.${product.image_ext}`}
+              productImage={`${process.env.NEXT_PUBLIC_BACKEND_URL}/images/${product._id}.${product.image_ext}`}
               productName={product.name}
               productPrice={product.price}
               productReduction={0.4}
+              product={product}
               productCat={product.category_id.name}
             />
           ))}

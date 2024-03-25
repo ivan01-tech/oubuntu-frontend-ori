@@ -103,7 +103,7 @@ export default function SignInAccount() {
         return;
       }
     },
-    [isError, setUser]
+    [error, isError, setUser]
   );
 
   return (

@@ -20,3 +20,9 @@ interface Group {
   members: UserTypes[];
   link: string;
 }
+
+interface ProductQuantityGroup {
+  _id: string;
+  quantity: number;
+  user_id: UserTypes;
+}

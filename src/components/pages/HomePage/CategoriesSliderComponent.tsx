@@ -27,7 +27,7 @@ const CategoriesSliderComponent = ({ data }: Props) => {
             return (
               <CarouselItem className="basis-1/3 lg:basis-1/6" key={prev._id}>
                 <CategoryBlock
-                  image={`${process.env.NEXT_PUBLIC_BACKEND_URL}/files/${prev._id}.${prev.image_ext}`}
+                  image={`${process.env.NEXT_PUBLIC_BACKEND_URL}/images/${prev._id}.${prev.image_ext}`}
                   label={prev.name}
                   category={prev}
                 />

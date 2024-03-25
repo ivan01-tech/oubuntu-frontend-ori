@@ -9,10 +9,13 @@ import {
   getImageUrlOnLocal,
 } from "@/lib/isValidPhone";
 import { queryClient } from "@/pages/_app";
-import { getGroudById, joinAGroup } from "@/services/products.services";
-import { Group } from "@/types/grupes";
+import {
+  getGroudById,
+  getUserProductQuantites,
+  joinAGroup,
+} from "@/services/products.services";
+import { Group, ProductQuantityGroup } from "@/types/grupes";
 import { Avatar } from "@chakra-ui/react";
-import { Item } from "@radix-ui/react-accordion";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import type { NextPageContext } from "next";
 import { usePathname, useRouter } from "next/navigation";
@@ -52,6 +55,18 @@ function ProductDeatilsPage({ group: groupData }: Props) {
     queryKey: ["getGroup"],
     queryFn: () => getGroudById<Group>(path),
   });
+
+  const {
+    isError: isErrU,
+    isPending: isPenU,
+    data: dataU,
+    error: errU,
+    mutateAsync,
+    isSuccess: isSuU,
+  } = useMutation({
+    mutationKey: ["getUserProductQuantites"],
+    mutationFn: getUserProductQuantites<ProductQuantityGroup[]>,
+  });
   //
   const [selectedOffer, setSelectedOffer] = useState(group?.offers[0]);
   //
@@ -86,6 +101,11 @@ function ProductDeatilsPage({ group: groupData }: Props) {
     mutationFn: joinAGroup<Group>,
   });
 
+  //
+  const totalCommand =
+    dataU && dataU.length >= 0
+      ? dataU?.reduce((prev, curr) => prev + curr.quantity!, 0)
+      : 0;
   // to join a group
   const joinGroupHnadler = () => {
     if (!user) {
@@ -107,13 +127,15 @@ function ProductDeatilsPage({ group: groupData }: Props) {
     setSelectedOffer(group?.offers.find((offer) => offer._id === offerId)!);
   };
   const handleIncrement = (offerId: string) => {
-    setQuantities((prevQuantities) => ({
-      ...prevQuantities,
-      [offerId]: Math.min(
-        (prevQuantities[offerId] || 0) + 1,
-        selectedOffer?.product_quantity!
-      ),
-    }));
+    if (selectedOffer?.product_quantity) {
+      setQuantities((prevQuantities) => ({
+        ...prevQuantities,
+        [offerId]: Math.min(
+          (prevQuantities[offerId] || 0) + 1,
+          selectedOffer?.product_quantity! - totalCommand!
+        ),
+      }));
+    }
   };
 
   const handleDecrement = (offerId: string) => {
@@ -167,6 +189,24 @@ function ProductDeatilsPage({ group: groupData }: Props) {
     }
   }, [group, isSuccess]);
 
+  // fetch user data
+  useEffect(() => {
+    (async () => {
+      if (isSuccess && group?._id) {
+        mutateAsync(group._id)
+          .then((res) => {
+            toast.success("Successfully loaded group members");
+          })
+          .catch((err) => {
+            errU &&
+              toast.error(
+                errU?.name + errU?.message || "Something went wrong!   "
+              );
+          });
+      }
+    })();
+  }, [errU, group, isSuccess, mutateAsync]);
+
   if (isPending || isLoading || isFetching) {
     return (
       <div
@@ -208,8 +248,15 @@ function ProductDeatilsPage({ group: groupData }: Props) {
   const getCategoriesName = group?.offers.map(
     (Item) => Item.product_id.category_id.name
   );
-  console.log("getCategoriesName ", selectedOffer);
 
+  console.log("getCategories ", selectedOffer.product_quantity, totalCommand);
+  const groupProgression =
+    dataU && dataU.length >= 0
+      ? calculateDiscountPercentage(
+          selectedOffer.product_quantity,
+          selectedOffer.product_quantity - totalCommand
+        )
+      : null;
   return (
     <MainLayout className="">
       <div className="flex flex-col lg:p-8 p-4">
@@ -365,16 +412,18 @@ function ProductDeatilsPage({ group: groupData }: Props) {
                   </div>
 
                   <hr className="my-4" />
-                  <div className="flex justify-between">
-                    <p className="text-lg font-bold">Total</p>
-                    <div className="">
-                      <p className="mb-1 text-lg font-bold">
-                        XAF{" "}
-                        {selectedOffer.discount_price *
-                          quantities[selectedOffer._id]}{" "}
-                      </p>
+                  {selectedOffer && quantities[selectedOffer._id] && (
+                    <div className="flex justify-between">
+                      <p className="text-lg font-bold">Total</p>
+                      <div className="">
+                        <p className="mb-1 text-lg font-bold">
+                          XAF{" "}
+                          {selectedOffer.discount_price *
+                            quantities[selectedOffer._id]}{" "}
+                        </p>
+                      </div>
                     </div>
-                  </div>
+                  )}
                   <div className="flex flex-wrap justify-center gap-4 mt-10">
                     {/* <button
                       type="button"
@@ -451,7 +500,7 @@ function ProductDeatilsPage({ group: groupData }: Props) {
                   </p>
                   <p className=" text-md  font-display opacity-90">
                     {" "}
-                    {group.offers[0].price} XAF{" "}
+                    {group.offers[0].discount_price} XAF{" "}
                   </p>
                   <p className="text-sm text-red-600"> 10kg restants </p>
                 </div>
@@ -478,31 +527,66 @@ function ProductDeatilsPage({ group: groupData }: Props) {
               <div className="grid md:grid-cols-2 gap-12 mt-6">
                 <div>
                   <div className="space-y-3">
-                    <div className="flex items-center gap-6">
-                      <div className="text-sm text-[#333] flex gap-3 font-bold">
-                        <p>Progression</p>
+                    {groupProgression && (
+                      <div className="flex items-center gap-6">
+                        <div className="text-sm text-[#333] flex gap-3 font-bold">
+                          <p>Progression</p>
 
-                        <p className="font-bold text-red-600 "> {"0.4"}% </p>
+                          <p className="font-bold text-red-600 ">
+                            {" "}
+                            {groupProgression}%{" "}
+                          </p>
+                        </div>
+                        <Progress
+                          value={groupProgression}
+                          className="max-w-[400px]"
+                        />
                       </div>
-                      <Progress value={50} className="max-w-[400px]" />
-                    </div>
-
+                    )}
                     <div className="flex flex-col gap-4">
-                      {group?.members.map((grp) => {
-                        return (
+                      {isPenU ? (
+                        <div
+                          data-te-loading-management-init
+                          className="flex flex-col gap-4 items-center"
+                          data-te-parent-selector="#loading-basic-example"
+                        >
                           <div
-                            className="flex justify-between items-center"
-                            key={grp._id}
-                          >
-                            <Avatar
+                            data-te-loading-icon-ref
+                            className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                            role="status"
+                          ></div>
+                          <span data-te-loading-text-ref>
+                            chargements des membres du group
+                          </span>
+                        </div>
+                      ) : isErrU ? (
+                        <p>{errU.message}</p>
+                      ) : (
+                        dataU &&
+                        dataU?.length >= 0 &&
+                        dataU.map((grp) => {
+                          return (
+                            <div
+                              className="flex justify-between items-center"
                               key={grp._id}
-                              name={grp.first_name + " " + grp.last_name}
-                              // src={grp.picture}
-                            />
-                            <p className="text-sm text-red-600"> 20kg </p>
-                          </div>
-                        );
-                      })}
+                            >
+                              <Avatar
+                                key={grp._id}
+                                name={
+                                  grp.user_id.first_name +
+                                  " " +
+                                  grp.user_id.last_name
+                                }
+                                // src={grp.picture}
+                              />
+                              <p className="text-sm text-red-600">
+                                {" "}
+                                {grp.quantity} kg{" "}
+                              </p>
+                            </div>
+                          );
+                        })
+                      )}
                     </div>
                     {/* <div className="flex flex-col gap-4">
                       <div className="flex justify-between items-center">

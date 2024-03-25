@@ -22,6 +22,7 @@ import { IoCreateOutline, IoEyeOutline } from "react-icons/io5";
 import GroupRow from "./GroupRow";
 import Link from "next/link";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { calculateDiscountPercentage } from "@/lib/isValidPhone";
 
 export type ProductCardProps = {
   productImage: string;
@@ -29,12 +30,14 @@ export type ProductCardProps = {
   productPrice: number;
   productReduction: number;
   productCat: string;
+  product: Product;
 };
 
 const ProductCard: FC<ProductCardProps> = ({
   productImage,
   productName,
   productPrice,
+  product,
   productReduction,
   productCat,
 }) => {
@@ -70,7 +73,7 @@ const ProductCard: FC<ProductCardProps> = ({
           </div>
         </div>
         <Link
-          href={"products/1"}
+          href={"products/" + product._id}
           className="absolute bottom-24  opacity-0 group-hover:opacity-100 translate-y-24 group group-hover:translate-y-0 bg-primary right-2 flex justify-center items-center w-8 h-8 rounded-full shadow-md duration-200 hover:shadow-lg"
         >
           <IoEyeOutline className="text-lg  text-white duration-100" />
@@ -148,14 +151,20 @@ const ProductCard: FC<ProductCardProps> = ({
       <p className="lg:text-lg truncate text-sm px-2 font-bold duration-200 hover:text-secondary">
         {productName}
       </p>
-      <p className="lg:text-md text-sm px-2"> {productPrice} XAF </p>
+      <p className="lg:text-md text-sm px-2"> {product.discount_price} XAF </p>
 
       <span className="flex space-x-1 px-2 pb-4">
         <p className=" flex my-auto text-xs line-through opacity-60 ">
           {" "}
-          1300 XAF{" "}
+          {product.price}{" "}
         </p>
-        <p className="font-bold text-red-600 "> {productReduction}% </p>
+        <p className="font-bold text-red-600 ">
+          {" "}
+          {calculateDiscountPercentage(
+            product.price,
+            product.discount_price
+          )}%{" "}
+        </p>
       </span>
     </div>
   );

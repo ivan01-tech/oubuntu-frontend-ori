@@ -6,7 +6,7 @@ export function isValidPhoneNumber(phone: string, code: CountryCode): boolean {
 }
 
 export const getImageUrlOnLocal = (dataId: string, imageext: string) => {
-  return `${process.env.NEXT_PUBLIC_BACKEND_URL}/files/${dataId}.${imageext}`;
+  return `${process.env.NEXT_PUBLIC_BACKEND_URL}/images/${dataId}.${imageext}`;
 };
 
 export function calculateDiscountPercentage(

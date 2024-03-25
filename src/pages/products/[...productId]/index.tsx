@@ -2,13 +2,227 @@ import MainLayout from "@/components/layouts/MainLayout";
 import OubuntuComponent from "@/components/pages/HomePage/OubuntuComponent";
 import CustomImage from "@/components/ui/image";
 import { Progress } from "@/components/ui/progress";
+import { queryClient } from "@/pages/_app";
+import {
+  getGroudById,
+  getProductById,
+  getUserProductQuantites,
+  joinAGroup,
+} from "@/services/products.services";
+import { Group, ProductQuantityGroup } from "@/types/grupes";
 import { Avatar } from "@chakra-ui/react";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { Group } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { useRouter } from "next/router";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 type Props = {};
 
 function ProductDeatilsPage({}: Props) {
+  const {
+    isError,
+    isPending,
+    isLoading,
+    isFetching,
+    data: group,
+    error,
+    isSuccess,
+  } = useQuery({
+    queryKey: ["getGroup"],
+    queryFn: () => getProductById<Group>(path),
+  });
+
+  const {
+    isError: isErrU,
+    isPending: isPenU,
+    data: dataU,
+    error: errU,
+    mutateAsync,
+    isSuccess: isSuU,
+  } = useMutation({
+    mutationKey: ["getUserProductQuantites"],
+    mutationFn: getUserProductQuantites<ProductQuantityGroup[]>,
+  });
+  //
+  const [selectedOffer, setSelectedOffer] = useState(group?.offers[0]);
+  //
+
+  group?.offers.forEach((offer) => {
+    initialQuantities[offer._id] = 1;
+  });
+  // État local pour stocker les quantités choisies par l'utilisateur pour chaque offre
+  const [quantities, setQuantities] =
+    useState<QuantityState>(initialQuantities);
+
+  // Fonction pour mettre à jour la quantité choisie pour une offre donnée
+  const handleQuantityChange = (offerId: string, quantity: number) => {
+    setQuantities((prevQuantities) => ({
+      ...prevQuantities,
+      [offerId]: quantity,
+    }));
+  };
+  // Mutations
+  const pathname = usePathname()?.split("/");
+  const router = useRouter();
+  const path = pathname ? pathname[pathname?.length - 1] : null;
+
+  const {
+    mutate,
+    isError: iserrJ,
+    error: errJ,
+    isSuccess: issucJ,
+    isPending: ispenJ,
+  } = useMutation({
+    mutationKey: ["joinGroup"],
+    mutationFn: joinAGroup<Group>,
+  });
+
+  //
+  const totalCommand =
+    dataU && dataU.length >= 0
+      ? dataU?.reduce((prev, curr) => prev + curr.quantity!, 0)
+      : 0;
+  // to join a group
+  const joinGroupHnadler = () => {
+    if (!user) {
+      toast.error("Vous devez etre connecter pour integrer un groupe");
+      return router.push("/sign-in");
+    }
+    if (!group?._id || !selectedOffer?._id) {
+      return toast.error("L'id du groupe ou de l'offre est requise");
+    }
+
+    mutate({
+      groupeId: group?._id,
+      offerId: selectedOffer?._id!,
+      quantity: quantities[selectedOffer?._id!],
+    });
+  };
+  //
+  const changeSelectedOfferHandler = (offerId: string) => {
+    setSelectedOffer(group?.offers.find((offer) => offer._id === offerId)!);
+  };
+  const handleIncrement = (offerId: string) => {
+    if (selectedOffer?.product_quantity) {
+      setQuantities((prevQuantities) => ({
+        ...prevQuantities,
+        [offerId]: Math.min(
+          (prevQuantities[offerId] || 0) + 1,
+          selectedOffer?.product_quantity! - totalCommand!
+        ),
+      }));
+    }
+  };
+
+  const handleDecrement = (offerId: string) => {
+    setQuantities((prevQuantities) => ({
+      ...prevQuantities,
+      [offerId]: Math.max((prevQuantities[offerId] || 0) - 1, 1),
+    }));
+  };
+
+  useEffect(() => {
+    if (!path) {
+      queryClient.invalidateQueries({
+        queryKey: ["getGroup"],
+      });
+    }
+  }, [path]);
+
+  useEffect(() => {
+    if (isError) {
+      console.log("error : ");
+      toast.error(error.message);
+
+      return router.back();
+    }
+  }, [error, isError, router]);
+
+  useEffect(() => {
+    if (iserrJ) {
+      toast.error(errJ.message);
+
+      return;
+    }
+  }, [errJ, iserrJ]);
+
+  useEffect(() => {
+    if (issucJ) {
+      toast.success("Successfully joined the group");
+      router.refresh();
+    }
+  }, [iserrJ, issucJ, router]);
+
+  useEffect(() => {
+    if (isSuccess) {
+      setSelectedOffer(group.offers[0]);
+      toast.success("Successfully loaded the group!");
+      const initial: QuantityState = {};
+      group?.offers.forEach((offer) => {
+        initialQuantities[offer._id] = 1;
+      });
+      setQuantities(initial);
+    }
+  }, [group, isSuccess]);
+
+  // fetch user data
+  useEffect(() => {
+    (async () => {
+      if (isSuccess && group?._id) {
+        mutateAsync(group._id)
+          .then((res) => {
+            toast.success("Successfully loaded group members");
+          })
+          .catch((err) => {
+            errU &&
+              toast.error(
+                errU?.name + errU?.message || "Something went wrong!   "
+              );
+          });
+      }
+    })();
+  }, [errU, group, isSuccess, mutateAsync]);
+
+  if (isPending || isLoading || isFetching) {
+    return (
+      <div
+        id="loading-basic-example"
+        className="h-screen gap-4 flex justify-center items-center w-full"
+      >
+        <div
+          data-te-loading-management-init
+          className="flex flex-col gap-4 items-center"
+          data-te-parent-selector="#loading-basic-example"
+        >
+          <div
+            data-te-loading-icon-ref
+            className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent motion-reduce:animate-[spin_1.5s_linear_infinite]"
+            role="status"
+          ></div>
+          <span data-te-loading-text-ref>Please wait a moment...</span>
+        </div>
+      </div>
+    );
+  }
+  if (!group || !selectedOffer) {
+    return (
+      <div
+        id="loading-basic-example"
+        className="h-screen gap-4 flex justify-center items-center w-full"
+      >
+        <div
+          data-te-loading-management-init
+          className="flex flex-col gap-4 items-center"
+          data-te-parent-selector="#loading-basic-example"
+        >
+          <h2 data-te-loading-text-ref>Quelque chose s'est mal passée</h2>
+        </div>
+      </div>
+    );
+  }
   return (
     <MainLayout className="">
       <div className="flex flex-col lg:p-8 p-4">
