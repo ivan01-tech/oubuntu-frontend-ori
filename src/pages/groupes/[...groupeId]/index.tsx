@@ -1,6 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 import MainLayout from "@/components/layouts/MainLayout";
 import OubuntuComponent from "@/components/pages/HomePage/OubuntuComponent";
+import CountdownTimer from "@/components/ui/CountdownTimer";
 import CustomImage from "@/components/ui/image";
 import { Progress } from "@/components/ui/progress";
 import { useUser } from "@/hooks/useUser";
@@ -13,6 +14,8 @@ import {
   getGroudById,
   getUserProductQuantites,
   joinAGroup,
+  leaveAgroup,
+  updateProductQuantity,
 } from "@/services/products.services";
 import { Group, ProductQuantityGroup } from "@/types/grupes";
 import { Avatar } from "@chakra-ui/react";
@@ -51,7 +54,7 @@ function ProductDeatilsPage({ group: groupData }: Props) {
     queryKey: ["getGroup"],
     queryFn: () => getGroudById<Group>(path),
   });
-
+  console.log("gr : ", group);
   const {
     isError: isErrU,
     isPending: isPenU,
@@ -85,12 +88,59 @@ function ProductDeatilsPage({ group: groupData }: Props) {
     mutationFn: joinAGroup<Group>,
   });
 
+  const {
+    mutateAsync: updatemutateAsync,
+    isError: iserrUP,
+    error: errUP,
+    isSuccess: issucUP,
+    isPending: ispenUP,
+  } = useMutation({
+    mutationKey: ["updateProductQuantity"],
+    mutationFn: updateProductQuantity<any>,
+  });
+
+  const {
+    mutateAsync: leaveGroupMutate,
+    isError: iserrL,
+    error: errL,
+    isSuccess: issucL,
+    isPending: ispenL,
+  } = useMutation({
+    mutationKey: ["leaveAgroup"],
+    mutationFn: leaveAgroup<any>,
+  });
+
   //
   const totalCommand =
     dataU && dataU.length >= 0
       ? dataU?.reduce((prev, curr) => prev + curr.quantity!, 0)
       : 0;
   // to join a group
+  const leaveGroupHnadler = async () => {
+    if (!user) {
+      toast.error("Vous devez etre connecter");
+      return router.push("/sign-in");
+    }
+    if (!group?._id || !selectedOffer?._id) {
+      return toast.error("L'id du groupe ou de l'offre est requise");
+    }
+    const mutateObj = {
+      groupeId: group?._id,
+      offerId: selectedOffer?._id!,
+      quantity,
+    };
+    console.log("mutateObj: ", mutateObj);
+    leaveGroupMutate(mutateObj)
+      .then((res) => {
+        console.log("res : ", res);
+        toast.success("'User removed from the group successfully'");
+        router.refresh();
+      })
+      .catch((err) => {
+        toast.error("Something went wrong !");
+        console.log("caught exception : ", err);
+      });
+  };
   const joinGroupHnadler = () => {
     if (!user) {
       toast.error("Vous devez etre connecter pour integrer un groupe");
@@ -107,6 +157,39 @@ function ProductDeatilsPage({ group: groupData }: Props) {
     console.log("mutateObj: ", mutateObj);
     mutate(mutateObj);
   };
+
+  const updateProductHnadler = () => {
+    if (!user) {
+      toast.error("Vous devez etre connecter pour integrer un groupe");
+      return router.push("/sign-in");
+    }
+    if (!group?._id || !selectedOffer?._id) {
+      return toast.error("L'id du groupe ou de l'offre est requise");
+    }
+    const lastQuant = dataU?.find((u) => u.user_id._id === user._id);
+    console.log("lastQuant", quantity, lastQuant);
+    if (!lastQuant || lastQuant?.quantity === quantity) {
+      return toast.error("La quantité de produit est la meme");
+    }
+    const mutateObj = {
+      groupeId: group?._id,
+      offerId: selectedOffer?._id!,
+      quantity,
+    };
+    console.log("mutateObj: ", mutateObj);
+    updatemutateAsync(mutateObj)
+      .then((prev) => {
+        console.log("prev : ", prev);
+        toast.success("Product quantity updated successfully");
+        router.refresh();
+      })
+      .catch((err) => {
+        console.log("err : ", err);
+        toast.error(errUP?.message || "Error updating product quantity");
+      });
+  };
+
+  //
   console.log(totalCommand, selectedOffer?.product_quantity);
   const handleIncrement = (offerId: string) => {
     if (selectedOffer?.product_quantity) {
@@ -129,12 +212,13 @@ function ProductDeatilsPage({ group: groupData }: Props) {
         )
       );
   };
+  //
   const handleDecrement = () => {
     if (selectedOffer?.product_quantity) {
       setQuantity((prevQuantities) => Math.max(prevQuantities - 1, 1));
     }
   };
-
+  //
   useEffect(() => {
     if (!path) {
       queryClient.invalidateQueries({
@@ -234,11 +318,12 @@ function ProductDeatilsPage({ group: groupData }: Props) {
   const getCategoriesName = group?.offer.product_id.category_id.name;
 
   console.log("getCategories ", selectedOffer.product_quantity, totalCommand);
+  const restQuantity = selectedOffer.product_quantity - totalCommand;
   const groupProgression =
     dataU && dataU.length >= 0
       ? calculateDiscountPercentage(
           selectedOffer.product_quantity,
-          selectedOffer.product_quantity - totalCommand
+          restQuantity
         )
       : null;
   return (
@@ -396,15 +481,33 @@ function ProductDeatilsPage({ group: groupData }: Props) {
                     {!group?.members.find((u) => u._id === user?._id) ? (
                       <button
                         type="button"
+                        disabled={ispenJ}
                         onClick={joinGroupHnadler}
                         className="min-w-[200px] px-4 py-3 bg-primary hover:bg-primary/80 text-white text-sm font-bold rounded w-full max-w-[350px] m-auto mt-1"
                       >
-                        Integrer le groupe
+                        {!ispenJ ? "Integrer le groupe" : "Veuillez patienter"}
                       </button>
                     ) : (
-                      <p className="min-w-[200px] px-4 py-3 text-center bg-primary hover:bg-primary/80 text-white text-sm font-bold rounded w-full max-w-[350px] m-auto mt-1">
-                        Vous etes deja members de ce groupe
-                      </p>
+                      <div className="flex justify-center items-start gap-4 flex-wrap">
+                        <button
+                          onClick={updateProductHnadler}
+                          disabled={ispenUP}
+                          className="min-w-[200px] px-2 py-2 text-center bg-primary hover:bg-primary/80 text-white text-sm font-bold rounded w-full max-w-[350px] m-auto mt-1"
+                        >
+                          {!ispenUP
+                            ? "Mettre à jour la quantité"
+                            : "Veuillez patienter..."}
+                        </button>
+                        <button
+                          onClick={leaveGroupHnadler}
+                          disabled={ispenL}
+                          className="min-w-[200px] px-2 py-2 text-center bg-red-600 hover:bg-red-500 text-white text-sm font-bold rounded w-full max-w-[350px] m-auto mt-1"
+                        >
+                          {!ispenL
+                            ? "Quitter le groupe"
+                            : "Veuillez patienter..."}
+                        </button>
+                      </div>
                     )}
                   </div>
                 </div>
@@ -463,26 +566,20 @@ function ProductDeatilsPage({ group: groupData }: Props) {
                     {" "}
                     {group.offer.discount_price} XAF{" "}
                   </p>
-                  <p className="text-sm text-red-600"> 10kg restants </p>
+                  <p className="text-sm text-red-600">
+                    {" "}
+                    {restQuantity}kg restants{" "}
+                  </p>
                 </div>
                 <div className="flex flex-col space-y-2">
                   <p className="flex justify-end text-right text-xs opacity-70">
                     {" "}
                     Douala{" "}
                   </p>
-                  <div className="flex space-x-1">
-                    <div className="p-1 w-8 h-8 text-xs flex justify-center items-center bg-red-500 text-white">
-                      05h
-                    </div>
-
-                    <div className="p-1 w-8 h-8 text-xs flex justify-center items-center bg-red-500 text-white">
-                      34m
-                    </div>
-
-                    <div className="p-1 w-8 h-8 text-xs flex justify-center items-center bg-red-500 text-white">
-                      54s
-                    </div>
-                  </div>
+                  {/* ddd */}
+                  {group.expired_at && (
+                    <CountdownTimer expirationDate={group.expired_at} />
+                  )}
                 </div>
               </div>
               <div className="grid md:grid-cols-2 gap-12 mt-6">
