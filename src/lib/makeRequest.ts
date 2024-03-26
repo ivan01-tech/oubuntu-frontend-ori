@@ -34,7 +34,7 @@ type U = {};
 // /**
 //  * Une fonction pour effectuer n'importe quel type de requête avec l'instance Axios.
 //  */
-export async function makeSucureRequest<T=any>(
+export async function makeSucureRequest<T = any>(
   url: string,
   options: AxiosRequestConfig
 ): Promise<T> {
@@ -50,7 +50,10 @@ export async function makeSucureRequest<T=any>(
       return data;
     })
     .catch((err: AxiosError) => {
-      console.log("erreur  ", err.message);
-      return Promise.reject({ message: err.message });
+      const msg =
+        (err.response?.data as { message: string }).message || err.message;
+
+      console.log("erreur  ", msg);
+      return Promise.reject({ message: msg });
     });
 }

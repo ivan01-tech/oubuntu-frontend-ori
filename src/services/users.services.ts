@@ -15,10 +15,28 @@ export async function createUserAndLogin<T = any>(data: Object) {
   });
 }
 
+export async function logoutUser() {
+  return makeSucureRequest(URLS.AUTH.LOGOUT, {
+    method: "GET",
+  });
+}
+
 export async function loginUser<T>(data: Object) {
   return makeSucureRequest<T>(URLS.AUTH.LOGIN, {
     data,
     method: "POST",
+  });
+}
+
+export async function getAllGroupsByUser<T>() {
+  return makeSucureRequest<T>(URLS.GROUPS.GET_ALL_USERS_GROUPS, {
+    method: "GET",
+  });
+}
+
+export async function getAllUserProductQty<T>() {
+  return makeSucureRequest<T>(URLS.GROUPS.GET_ALL_USERS_QTY, {
+    method: "GET",
   });
 }
 

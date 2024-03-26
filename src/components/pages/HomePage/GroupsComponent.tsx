@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Carousel,
   CarouselContent,
@@ -9,17 +9,57 @@ import {
 import GroupCard, { GroupCardProps } from "./_/GroupCard";
 import { Alegreya } from "next/font/google";
 import { HiMiniChevronRight } from "react-icons/hi2";
-import { Group } from "@/types/grupes";
+import {
+  Group,
+  ProductQuantityGroup,
+  ProductQuantityWithoutUser,
+  SimpleProductQuantity,
+} from "@/types/grupes";
 import {
   calculateDiscountPercentage,
   getImageUrlOnLocal,
 } from "@/lib/isValidPhone";
+import { useMutation } from "@tanstack/react-query";
+import { getProductsQuantities } from "@/services/products.services";
+import toast from "react-hot-toast";
 
 const ale = Alegreya({ subsets: ["latin"] });
 type Props = {
   groups: Group[];
 };
 const GroupsComponent = ({ groups }: Props) => {
+  const {
+    isError: isErrU,
+    isPending: isPenU,
+    data: dataU,
+    error: errU,
+    mutateAsync,
+    isSuccess: isSuU,
+  } = useMutation({
+    mutationKey: ["getProductsQuantities"],
+    mutationFn: getProductsQuantities<SimpleProductQuantity[]>,
+  });
+
+  // fetch user data
+  useEffect(() => {
+    (async () => {
+      if (groups && groups[0]?._id) {
+        mutateAsync()
+          .then((res) => {
+            // toast.success("Successfully loaded group members");
+            console.log("data1 : ", res);
+          })
+          .catch((err) => {
+            errU &&
+              toast.error(
+                errU?.name + errU?.message || "Something went wrong!   "
+              );
+          });
+      }
+    })();
+  }, [errU, groups, mutateAsync]);
+  //
+
   // const fakeGroupes: GroupCardProps[] = [
   //   {
   //     productImage: "/images/group/viande.jpg",
@@ -136,28 +176,53 @@ const GroupsComponent = ({ groups }: Props) => {
             }}
             className=" w-full "
           >
-            <CarouselContent className=" w-full">
-              {groups.map((group, index) => (
-                <CarouselItem key={index} className="basis-1/2 lg:basis-1/4">
-                  <GroupCard
-                    productImage={getImageUrlOnLocal(
-                      group.offers[0].product_id._id,
-                      group.offers[0].product_id.image_ext
-                    )}
-                    group={group}
-                    productName={group.offers[0].product_id.name}
-                    productPrice={group.offers[0].discount_price}
-                    discount={group.offers[0].price}
-                    productReduction={calculateDiscountPercentage(
-                      group.offers[0].price,
-                      group.offers[0].discount_price
-                    )}
-                    progression={80}
-                    maxNumbers={10}
-                    members={group.members}
-                  />
-                </CarouselItem>
-              ))}
+            <CarouselContent className="w-full">
+              {groups.map((group, index) => {
+                // Calculate total quantity of products already ordered
+                const conserGroup = dataU?.filter(
+                  (prev) => prev.group_id === group._id
+                );
+
+                const totalCommand =
+                  conserGroup && conserGroup.length > 0
+                    ? conserGroup.reduce(
+                        (prev, curr) => prev + curr.quantity,
+                        0
+                      )
+                    : 0;
+
+                // Calculate remaining quantity in the group
+                const remainingQuantity =
+                  group.offer.product_quantity - totalCommand;
+
+                // Calculate percentage completion
+                const groupProgression = calculateDiscountPercentage(
+                  group.offer.product_quantity,
+                  remainingQuantity
+                );
+
+                return (
+                  <CarouselItem key={index} className="basis-1/2 lg:basis-1/4">
+                    <GroupCard
+                      productImage={getImageUrlOnLocal(
+                        group.offer.product_id._id,
+                        group.offer.product_id.image_ext
+                      )}
+                      group={group}
+                      productName={group.offer.product_id.name}
+                      productPrice={group.offer.discount_price}
+                      discount={group.offer.price}
+                      productReduction={calculateDiscountPercentage(
+                        group.offer.price,
+                        group.offer.discount_price
+                      )}
+                      progression={groupProgression} // Pass the calculated progression here
+                      maxNumbers={10}
+                      members={group.members}
+                    />
+                  </CarouselItem>
+                );
+              })}
             </CarouselContent>
             <CarouselPrevious className="-left-4 shadow-md border-none hover:bg-white hover:bg-opacity-75 bg-white duration-300 hover:shadow-lg" />
             <CarouselNext className="-right-0  shadow-md border-none hover:bg-white hover:bg-opacity-75 bg-white duration-300 hover:shadow-lg" />

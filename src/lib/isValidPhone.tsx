@@ -14,7 +14,7 @@ export function calculateDiscountPercentage(
   discountedPrice: number
 ): number {
   // Vérifie si le prix initial est plus grand que le prix après réduction
-  if (initialPrice <= discountedPrice) {
+  if (initialPrice < discountedPrice) {
     throw new Error(
       "Le prix initial doit être supérieur au prix après réduction."
     );

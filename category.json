@@ -1,30 +1,37 @@
 {
-  "_id": "65e1ba1f654223c73389b364",
-  "name": "Product One",
-  "price": 1250,
-  "discount_price": "250",
-  "image_ext": "webp",
-  "created_by": {
-    "_id": "65df882ec4a39dd28bf8466c",
-    "first_name": "Carlos",
-    "email": "carloskakeusilatsa@gmail.com",
-    "last_name": "Silatsa",
-    "roles": ["USER"],
-    "googleId": "115938668927517961690",
-    "facebookId": null,
-    "picture": "https://lh3.googleusercontent.com/a/ACg8ocJN9rBKDCTRXyHKABDWxlbaO_7boTtRjkGv_8xMZ0GH=s96-c",
-    "created_at": "2024-02-28T19:23:26.016Z",
+  "_id": "660290b45a7da2029a515622",
+  "title": "un groupe",
+  "offer": {
+    "_id": "65fd85dac4b0e99a73205327",
+    "product_id": {
+      "_id": "65fd82c13bf4b351c124696d",
+      "name": "Legumes",
+      "price": 2500,
+      "discount_price": 2300,
+      "image_ext": "jpg",
+      "created_by": "65e19a1bf4b6c42e95509ca4",
+      "category_id": {
+        "_id": "65fd80b93bf4b351c1246932",
+        "name": "Poisson",
+        "link": null,
+        "image_ext": "webp",
+        "created_at": "2024-03-22T12:59:37.378Z",
+        "__v": 0
+      },
+      "created_at": "2024-03-22T13:08:17.649Z",
+      "__v": 0
+    },
+    "price": 1200,
+    "discount_price": 1100,
+    "product_quantity": 180,
+    "author_id": "65df882ec4a39dd28bf8466c",
+    "description": "qeqfcer",
+    "created_at": "2024-03-22T13:21:30.845Z",
     "__v": 0
   },
-  "category_id": {
-    "_id": "65e1b9a2d50b1c52db63145f",
-    "name": "Poisson",
-    "link": null,
-    "image_ext": "webp",
-    "createdAt": "2024-03-01T11:18:58.217Z",
-    "updatedAt": "2024-03-01T11:18:58.229Z",
-    "__v": 0
-  },
-  "created_at": "2024-03-01T11:21:03.435Z",
-  "__v": 0
+  "members": ["65df8929c4a39dd28bf8467c"],
+  "author_id": "65e19a1bf4b6c42e95509ca4",
+  "link": "http://localhost:3500/api/groups/660290b45a7da2029a515622/groupMenbers",
+  "expired_at": "2024-03-26T09:07:47.437Z",
+  "__v": 1
 }

@@ -49,6 +49,12 @@ export async function getUserProductQuantites<Z>(groupeId: string) {
   });
 }
 
+export async function getProductsQuantities<Z>() {
+  return makeSucureRequest<Z>(URLS.GROUPS.PRODUCT_Quant_ALL, {
+    method: "GET",
+  });
+}
+
 export async function joinAGroup<Z>({
   groupeId,
   offerId,

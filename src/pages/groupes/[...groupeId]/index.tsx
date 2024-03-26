@@ -36,10 +36,6 @@ ProductDeatilsPage.getInitialProps = async (ctx: NextPageContext) => {
 type Props = {
   group: Group | null;
 };
-interface QuantityState {
-  [key: string]: number; // Signature d'index
-}
-const initialQuantities: QuantityState = {};
 
 function ProductDeatilsPage({ group: groupData }: Props) {
   const { user } = useUser()!;
@@ -68,27 +64,15 @@ function ProductDeatilsPage({ group: groupData }: Props) {
     mutationFn: getUserProductQuantites<ProductQuantityGroup[]>,
   });
   //
-  const [selectedOffer, setSelectedOffer] = useState(group?.offers[0]);
-  //
 
-  group?.offers.forEach((offer) => {
-    initialQuantities[offer._id] = 1;
-  });
-  // État local pour stocker les quantités choisies par l'utilisateur pour chaque offre
-  const [quantities, setQuantities] =
-    useState<QuantityState>(initialQuantities);
-
-  // Fonction pour mettre à jour la quantité choisie pour une offre donnée
-  const handleQuantityChange = (offerId: string, quantity: number) => {
-    setQuantities((prevQuantities) => ({
-      ...prevQuantities,
-      [offerId]: quantity,
-    }));
-  };
   // Mutations
   const pathname = usePathname()?.split("/");
   const router = useRouter();
   const path = pathname ? pathname[pathname?.length - 1] : null;
+  const [selectedOffer, setSelectedOffer] = useState(group?.offer);
+  //
+  // État local pour stocker les quantités choisies par l'utilisateur pour chaque offre
+  const [quantity, setQuantity] = useState<number>(1);
 
   const {
     mutate,
@@ -115,34 +99,40 @@ function ProductDeatilsPage({ group: groupData }: Props) {
     if (!group?._id || !selectedOffer?._id) {
       return toast.error("L'id du groupe ou de l'offre est requise");
     }
-
-    mutate({
+    const mutateObj = {
       groupeId: group?._id,
       offerId: selectedOffer?._id!,
-      quantity: quantities[selectedOffer?._id!],
-    });
+      quantity,
+    };
+    console.log("mutateObj: ", mutateObj);
+    mutate(mutateObj);
   };
-  //
-  const changeSelectedOfferHandler = (offerId: string) => {
-    setSelectedOffer(group?.offers.find((offer) => offer._id === offerId)!);
-  };
+  console.log(totalCommand, selectedOffer?.product_quantity);
   const handleIncrement = (offerId: string) => {
     if (selectedOffer?.product_quantity) {
-      setQuantities((prevQuantities) => ({
-        ...prevQuantities,
-        [offerId]: Math.min(
-          (prevQuantities[offerId] || 0) + 1,
-          selectedOffer?.product_quantity! - totalCommand!
-        ),
-      }));
+      setQuantity((prevQuantities) =>
+        Math.min(
+          (prevQuantities || 0) + 1,
+          selectedOffer?.product_quantity - totalCommand!
+        )
+      );
     }
   };
 
-  const handleDecrement = (offerId: string) => {
-    setQuantities((prevQuantities) => ({
-      ...prevQuantities,
-      [offerId]: Math.max((prevQuantities[offerId] || 0) - 1, 1),
-    }));
+  // Fonction pour mettre à jour la quantité choisie pour une offre donnée
+  const handleQuantityChange = (offerId: string, quant: number) => {
+    if (selectedOffer?.product_quantity)
+      setQuantity((prevQuantities) =>
+        Math.min(
+          (prevQuantities || 0) + 1,
+          selectedOffer?.product_quantity - totalCommand!
+        )
+      );
+  };
+  const handleDecrement = () => {
+    if (selectedOffer?.product_quantity) {
+      setQuantity((prevQuantities) => Math.max(prevQuantities - 1, 1));
+    }
   };
 
   useEffect(() => {
@@ -179,15 +169,11 @@ function ProductDeatilsPage({ group: groupData }: Props) {
 
   useEffect(() => {
     if (isSuccess) {
-      setSelectedOffer(group.offers[0]);
+      setSelectedOffer(group.offer);
       toast.success("Successfully loaded the group!");
-      const initial: QuantityState = {};
-      group?.offers.forEach((offer) => {
-        initialQuantities[offer._id] = 1;
-      });
-      setQuantities(initial);
+      setQuantity((prevQuantities) => 1);
     }
-  }, [group, isSuccess]);
+  }, [group, isSuccess, selectedOffer?.product_quantity, totalCommand]);
 
   // fetch user data
   useEffect(() => {
@@ -245,9 +231,7 @@ function ProductDeatilsPage({ group: groupData }: Props) {
     );
   }
 
-  const getCategoriesName = group?.offers.map(
-    (Item) => Item.product_id.category_id.name
-  );
+  const getCategoriesName = group?.offer.product_id.category_id.name;
 
   console.log("getCategories ", selectedOffer.product_quantity, totalCommand);
   const groupProgression =
@@ -271,43 +255,25 @@ function ProductDeatilsPage({ group: groupData }: Props) {
                   )}
                   className="w-4/5 rounded object-cover"
                 />
-                {group.offers.length > 1 && (
+                {/* {group.offer && (
                   <div className="mt-6 flex flex-wrap justify-center gap-6 mx-auto">
-                    {group?.offers.map((offer) => {
-                      if (offer._id === selectedOffer._id) {
-                        return (
-                          <div
-                            className="rounded-xl p-4  border-gray-800 border-2"
-                            key={offer._id}
-                          >
-                            <CustomImage
-                              path={getImageUrlOnLocal(
-                                selectedOffer!.product_id._id,
-                                selectedOffer!.product_id.image_ext
-                              )}
-                              className="w-24 cursor-pointer hover:border-gray-800 border-2"
-                            />
-                          </div>
-                        );
-                      }
-                      return (
-                        <div
-                          className="rounded-xl p-4  border-gray-800 border-2"
-                          key={offer._id}
-                          onClick={() => changeSelectedOfferHandler(offer._id)}
-                        >
-                          <CustomImage
-                            path={getImageUrlOnLocal(
-                              selectedOffer!.product_id._id,
-                              selectedOffer!.product_id.image_ext
-                            )}
-                            className="w-24 cursor-pointer hover:border-gray-800 border-2"
-                          />
-                        </div>
-                      );
-                    })}
+                    {
+                      <div
+                        className="rounded-xl p-4  border-gray-800 border-2"
+                        key={group.offer._id}
+                        // onClick={() => changeSelectedOfferHandler(offer._id)}
+                      >
+                        <CustomImage
+                          path={getImageUrlOnLocal(
+                            selectedOffer!.product_id._id,
+                            selectedOffer!.product_id.image_ext
+                          )}
+                          className="w-24 cursor-pointer hover:border-gray-800 border-2"
+                        />
+                      </div>
+                    }
                   </div>
-                )}
+                )} */}
               </div>
               <div className="lg:col-span-2">
                 <h2 className="text-2xl font-extrabold text-[#333]">
@@ -335,21 +301,18 @@ function ProductDeatilsPage({ group: groupData }: Props) {
                   </p>
                 </div>
                 <div className="flex items-center flex-wrap gap-3 my-4">
-                  {getCategoriesName?.map((prev) => (
-                    <div
-                      key={prev}
-                      className={`p-1 px-3 text-white max-w-fit rounded-full  my-3  truncate ${
-                        [
-                          "bg-primary",
-                          "bg-yellow-700",
-                          "bg-red-700",
-                          "bg-indigo-800",
-                        ][Math.floor(Math.random() * 4)]
-                      }`}
-                    >
-                      <p> {prev}</p>
-                    </div>
-                  ))}
+                  <div
+                    className={`p-1 px-3 text-white max-w-fit rounded-full  my-3  truncate ${
+                      [
+                        "bg-primary",
+                        "bg-yellow-700",
+                        "bg-red-700",
+                        "bg-indigo-800",
+                      ][Math.floor(Math.random() * 4)]
+                    }`}
+                  >
+                    <p> {getCategoriesName}</p>
+                  </div>
                 </div>
 
                 <div className="flex flex-wrap justify-center gap-4 mt-1">
@@ -376,7 +339,7 @@ function ProductDeatilsPage({ group: groupData }: Props) {
                     <p className="text-gray-700">Quantité</p>
                     <div className="flex items-center border-gray-100">
                       <button
-                        onClick={() => handleDecrement(selectedOffer._id)}
+                        onClick={() => handleDecrement()}
                         className="cursor-pointer rounded-l bg-gray-100 py-1 px-3.5 duration-100 hover:bg-primary hover:text-white"
                       >
                         {" "}
@@ -387,7 +350,7 @@ function ProductDeatilsPage({ group: groupData }: Props) {
                         type="number"
                         max={selectedOffer!.product_quantity}
                         min="1"
-                        value={quantities[selectedOffer._id] || 1}
+                        value={quantity || 1}
                         onChange={(e) =>
                           handleQuantityChange(
                             selectedOffer._id,
@@ -412,14 +375,12 @@ function ProductDeatilsPage({ group: groupData }: Props) {
                   </div>
 
                   <hr className="my-4" />
-                  {selectedOffer && quantities[selectedOffer._id] && (
+                  {selectedOffer && quantity && (
                     <div className="flex justify-between">
                       <p className="text-lg font-bold">Total</p>
                       <div className="">
                         <p className="mb-1 text-lg font-bold">
-                          XAF{" "}
-                          {selectedOffer.discount_price *
-                            quantities[selectedOffer._id]}{" "}
+                          XAF {selectedOffer.discount_price * quantity}{" "}
                         </p>
                       </div>
                     </div>
@@ -441,7 +402,7 @@ function ProductDeatilsPage({ group: groupData }: Props) {
                         Integrer le groupe
                       </button>
                     ) : (
-                      <p className="min-w-[200px] px-4 py-3 bg-primary hover:bg-primary/80 text-white text-sm font-bold rounded w-full max-w-[350px] m-auto mt-1">
+                      <p className="min-w-[200px] px-4 py-3 text-center bg-primary hover:bg-primary/80 text-white text-sm font-bold rounded w-full max-w-[350px] m-auto mt-1">
                         Vous etes deja members de ce groupe
                       </p>
                     )}
@@ -500,7 +461,7 @@ function ProductDeatilsPage({ group: groupData }: Props) {
                   </p>
                   <p className=" text-md  font-display opacity-90">
                     {" "}
-                    {group.offers[0].discount_price} XAF{" "}
+                    {group.offer.discount_price} XAF{" "}
                   </p>
                   <p className="text-sm text-red-600"> 10kg restants </p>
                 </div>
@@ -527,7 +488,7 @@ function ProductDeatilsPage({ group: groupData }: Props) {
               <div className="grid md:grid-cols-2 gap-12 mt-6">
                 <div>
                   <div className="space-y-3">
-                    {groupProgression && (
+                    {groupProgression != null && (
                       <div className="flex items-center gap-6">
                         <div className="text-sm text-[#333] flex gap-3 font-bold">
                           <p>Progression</p>

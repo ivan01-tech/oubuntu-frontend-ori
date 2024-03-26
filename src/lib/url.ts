@@ -5,6 +5,7 @@ export const URLS = {
   },
   AUTH: {
     LOGIN: "/auth/login",
+    LOGOUT: "/auth/logout",
     GET_STATUS: "/auth/status",
     GET_STATUS_GOOGLE: "/auth/google/success",
   },
@@ -19,10 +20,13 @@ export const URLS = {
   },
 
   GROUPS: {
+    GET_ALL_USERS_QTY: "/groups/getUserProductQuantityGroupes",
     GET: "/groups",
+    GET_ALL_USERS_GROUPS: "/groups/getAllGroupsByUser",
     JOIN: (id: string) => "/groups/" + id + "/groupMenbers",
     ID: (id: string) => "/groups/" + id,
     PRODUCT_Quant: (id: string) => "/groups/" + id + "/productsQuantities/",
+    PRODUCT_Quant_ALL: "/groups/getProductsQuantities/",
   },
 };
 // const OUBUNTU_BACKEND_URI_GRP = `${
