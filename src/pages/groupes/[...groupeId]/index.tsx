@@ -26,21 +26,21 @@ import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
-ProductDeatilsPage.getInitialProps = async (ctx: NextPageContext) => {
-  const groupId = ctx?.query?.groupeId;
+// ProductDeatilsPage.getInitialProps = async (ctx: NextPageContext) => {
+//   const groupId = ctx?.query?.groupeId;
 
-  if (!groupId) {
-    return { group: null };
-  }
-  const group = await getGroudById<Group>(groupId[0]);
-  return { group: group };
-};
+//   if (!groupId) {
+//     return { group: null };
+//   }
+//   const group = await getGroudById<Group>(groupId[0]);
+//   return { group: group };
+// };
 
 type Props = {
   group: Group | null;
 };
 
-function ProductDeatilsPage({ group: groupData }: Props) {
+function ProductDeatilsPage({}: Props) {
   const { user } = useUser()!;
   const {
     isError,
