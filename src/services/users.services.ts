@@ -40,6 +40,18 @@ export async function getAllUserProductQty<T>() {
   });
 }
 
+export async function getAllUserProductQtyWithUserDetails<T>() {
+  return makeSucureRequest<T>(URLS.GROUPS.GET_ALL_USERS_QTY_WITH_DETAILS, {
+    method: "GET",
+  });
+}
+
+export async function getAllOffers<T>() {
+  return makeSucureRequest<T>(URLS.OFFERS.index, {
+    method: "GET",
+  });
+}
+
 export async function getUserStatus<T>() {
   return makeSucureRequest<T>(URLS.AUTH.GET_STATUS, {
     method: "GET",

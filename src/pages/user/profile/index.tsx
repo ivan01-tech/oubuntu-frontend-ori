@@ -36,6 +36,8 @@ import { getAllUserProductQty } from "@/services/users.services";
 import { getImageUrlOnLocal } from "@/lib/isValidPhone";
 import TruncatedLink from "@/components/SearchComponents/Truncate";
 import CountdownTimer from "@/components/ui/CountdownTimer";
+import { getGroupUrlFront, groupeLinkTosee } from "@/lib/getUrlGroupFront";
+import Link from "next/link";
 
 type Props = {};
 enum Section {
@@ -71,51 +73,6 @@ export default function ProfilePage({}: Props) {
     mutationKey: ["getAllUserProductQty"],
     mutationFn: getAllUserProductQty<ProductQuantity[]>,
   });
-
-  const invoices = [
-    {
-      invoice: "INV001",
-      paymentStatus: "Paid",
-      totalAmount: "$250.00",
-      paymentMethod: "Credit Card",
-    },
-    {
-      invoice: "INV002",
-      paymentStatus: "Pending",
-      totalAmount: "$150.00",
-      paymentMethod: "PayPal",
-    },
-    {
-      invoice: "INV003",
-      paymentStatus: "Unpaid",
-      totalAmount: "$350.00",
-      paymentMethod: "Bank Transfer",
-    },
-    {
-      invoice: "INV004",
-      paymentStatus: "Paid",
-      totalAmount: "$450.00",
-      paymentMethod: "Credit Card",
-    },
-    {
-      invoice: "INV005",
-      paymentStatus: "Paid",
-      totalAmount: "$550.00",
-      paymentMethod: "PayPal",
-    },
-    {
-      invoice: "INV006",
-      paymentStatus: "Pending",
-      totalAmount: "$200.00",
-      paymentMethod: "Bank Transfer",
-    },
-    {
-      invoice: "INV007",
-      paymentStatus: "Unpaid",
-      totalAmount: "$300.00",
-      paymentMethod: "Credit Card",
-    },
-  ];
 
   //
   useEffect(
@@ -216,15 +173,14 @@ export default function ProfilePage({}: Props) {
 
                 <div className="grid max-w-2xl mx-auto mt-8">
                   <div className="flex flex-col items-center space-y-5 sm:flex-row sm:space-y-0">
-                    <Image
-                      width={1280}
-                      height={1280}
+                    <Avatar
+                      name={user?.first_name + " " + user?.last_name}
+                      scaleX={2}
+                      scaleY={2}
                       className="object-cover w-40 h-40 p-1 rounded-full ring-2 ring-indigo-300 dark:ring-indigo-500"
-                      src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGZhY2V8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60"
-                      alt="Bordered avatar"
                     />
 
-                    <div className="flex flex-col space-y-5 sm:ml-8">
+                    {/* <div className="flex flex-col space-y-5 sm:ml-8">
                       <button
                         type="button"
                         className="py-3.5 px-7 text-base font-medium text-indigo-100 focus:outline-none bg-[#202142] rounded-lg border border-indigo-200 hover:bg-indigo-900 focus:z-10 focus:ring-4 focus:ring-indigo-200 "
@@ -237,7 +193,7 @@ export default function ProfilePage({}: Props) {
                       >
                         Delete picture
                       </button>
-                    </div>
+                    </div> */}
                   </div>
 
                   <div className="items-center mt-8 sm:mt-14 text-[#202142]">
@@ -342,13 +298,15 @@ export default function ProfilePage({}: Props) {
                       {groupUser?.map((invoice) => (
                         <TableRow key={invoice._id}>
                           <TableCell className="font-medium">
-                            {invoice.group_id._id}
+                            <Link href={groupeLinkTosee(invoice.group_id._id)}>
+                              Voir
+                            </Link>
                           </TableCell>
                           <TableCell>{invoice.group_id.title}</TableCell>
                           <TableCell>
                             <TruncatedLink
                               maxLength={invoice.group_id.link.length / 2}
-                              url={invoice.group_id.link}
+                              url={getGroupUrlFront(invoice.group_id._id)}
                             />
                           </TableCell>
                           <TableCell className="text-right">
@@ -368,6 +326,10 @@ export default function ProfilePage({}: Props) {
           {section === Section.CHAGE_PASSWORD && (
             <div className="items-center mt-8 sm:mt-14 text-[#202142]">
               <div className="flex flex-col items-center w-full mb-2 space-x-0 space-y-2 sm:flex-row sm:space-x-4 sm:space-y-0 sm:mb-6">
+                <h2 className="pl-6 text-2xl font-bold sm:text-xl">
+                  Changer de mot passe
+                </h2>
+
                 <div className="w-full">
                   <label
                     htmlFor="password"
@@ -379,7 +341,7 @@ export default function ProfilePage({}: Props) {
                     type="password"
                     id="password"
                     className="bg-indigo-50 border border-indigo-300 text-indigo-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 "
-                    placeholder="Your first name"
+                    placeholder="password"
                     // value={profile}
                     required
                   />
@@ -396,7 +358,7 @@ export default function ProfilePage({}: Props) {
                     type="password"
                     id="last_name"
                     className="bg-indigo-50 border border-indigo-300 text-indigo-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 "
-                    placeholder="Your last name"
+                    placeholder="new password"
                     value={profile?.last_name}
                     required
                   />
@@ -440,6 +402,9 @@ export default function ProfilePage({}: Props) {
               </div>
             ) : (
               <div className="mt-8">
+                <h2 className="pl-6 text-2xl font-bold sm:text-xl">
+                  Mon Panier
+                </h2>
                 <div className="flow-root">
                   <ul role="list" className="-my-6 divide-y divide-gray-200">
                     {groupUser?.map((group) => {

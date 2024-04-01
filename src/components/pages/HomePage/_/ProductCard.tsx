@@ -9,7 +9,6 @@ import {
   Drawer,
   DrawerContent,
   DrawerHeader,
-  DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import CustomImage from "@/components/ui/image";
@@ -23,6 +22,22 @@ import GroupRow from "./GroupRow";
 import Link from "next/link";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { calculateDiscountPercentage } from "@/lib/isValidPhone";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { getAllGroupes } from "@/services/products.services";
+import {
+  Group,
+  Offer,
+  ProductQuantity,
+  ProductQuantityWithUserDetails,
+} from "@/types/grupes";
+import { Spinner } from "@chakra-ui/react";
+import NoDataComp from "@/components/ui/NoDataComp";
+import {
+  getAllOffers,
+  getAllUserProductQty,
+  getAllUserProductQtyWithUserDetails,
+} from "@/services/users.services";
+import OfferCard from "./OfferCrad";
 
 export type ProductCardProps = {
   productImage: string;
@@ -45,6 +60,40 @@ const ProductCard: FC<ProductCardProps> = ({
   const [openGroupList, setOpenGroupList] = useState(false);
   const [openGroupCreate, setOpenGroupCreate] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
+
+  const {
+    isSuccess: isSuccessG,
+    data: dataG,
+    isLoading: isLodG,
+    isError: isErrG,
+    error: errG,
+  } = useQuery({
+    queryKey: ["groupes"],
+    queryFn: getAllGroupes<Group[]>,
+  });
+
+  const {
+    isSuccess,
+    isError,
+    data: usersQty,
+  } = useQuery({
+    queryKey: ["getAllUserProductQty"],
+    queryFn: getAllUserProductQtyWithUserDetails<
+      ProductQuantityWithUserDetails[]
+    >,
+  });
+
+  const {
+    isSuccess: isSucO,
+    isError: iserrO,
+    data: offers,
+  } = useQuery({
+    queryKey: ["getAllOffers"],
+    queryFn: getAllOffers<Offer[]>,
+  });
+
+  console.log(" : ", offers);
+
   return (
     <div className="flex flex-col  bg-white text-gray-800 space-y-1 rounded-xl shadow duration-200 hover:shadow-md">
       <div className="flex relative group">
@@ -95,14 +144,53 @@ const ProductCard: FC<ProductCardProps> = ({
                 </DialogHeader>
                 <TabsContent value="list">
                   <div className="flex flex-col space-y-4 ">
-                    <GroupRow />
-                    <GroupRow />
-                    <GroupRow />
-                    <GroupRow />
+                    {isLodG ? (
+                      <div className=" flex justify-center items-center flex-col">
+                        <Spinner
+                          thickness="4px"
+                          speed="0.65s"
+                          emptyColor="gray.200"
+                          color="blue.500"
+                          size="xl"
+                        />
+                        <p>Chargement des catégories</p>
+                      </div>
+                    ) : isErrG ? (
+                      <p>{errG.message}</p>
+                    ) : dataG && dataG.length > 0 ? (
+                      dataG.map((grp) => {
+                        console.log("pra : ", grp.members);
+                        const usersList = usersQty
+                          ? usersQty
+                              .filter((data) =>
+                                grp.members.includes(data.user_id)
+                              )
+                              .map((data) => data.user_id)
+                          : [];
+                        console.log("user list : ", usersList);
+
+                        return (
+                          <GroupRow
+                            quantyGrp={
+                              usersQty?.filter(
+                                (prev) => prev.group_id._id === grp._id
+                              ) || []
+                            }
+                            users={grp.members}
+                            group={grp}
+                            key={grp._id}
+                          />
+                        );
+                      })
+                    ) : (
+                      <NoDataComp objectType="Groupe" />
+                    )}
                   </div>
                 </TabsContent>
                 <TabsContent value="new">
-                  Change your password here.
+                  {offers?.map((prev) => (
+                    <OfferCard offer={prev} key={prev._id} />
+                  ))}
                 </TabsContent>
               </Tabs>
             </DialogContent>
@@ -124,14 +212,51 @@ const ProductCard: FC<ProductCardProps> = ({
                 </DrawerHeader>
                 <TabsContent value="list">
                   <div className="flex flex-col space-y-4 px-4">
-                    <GroupRow />
-                    <GroupRow />
-                    <GroupRow />
-                    <GroupRow />
+                    {isLodG ? (
+                      <div className=" flex justify-center items-center flex-col">
+                        <Spinner
+                          thickness="4px"
+                          speed="0.65s"
+                          emptyColor="gray.200"
+                          color="blue.500"
+                          size="xl"
+                        />
+                        <p>Chargement des catégories</p>
+                      </div>
+                    ) : isErrG ? (
+                      <p>{errG.message}</p>
+                    ) : dataG && dataG.length > 0 ? (
+                      dataG.map((grp) => {
+                        const usersList = usersQty
+                          ? usersQty
+                              .filter((data) =>
+                                grp.members.includes(data.user_id)
+                              )
+                              .map((data) => data.user_id)
+                          : [];
+                        console.log("user list : ", usersList);
+                        return (
+                          <GroupRow
+                            quantyGrp={
+                              usersQty?.filter(
+                                (prev) => prev.group_id._id === grp._id
+                              ) || []
+                            }
+                            users={usersList}
+                            group={grp}
+                            key={grp._id}
+                          />
+                        );
+                      })
+                    ) : (
+                      <NoDataComp objectType="Groupe" />
+                    )}
                   </div>
                 </TabsContent>
                 <TabsContent value="new">
-                  Change your password here.
+                  {offers?.map((prev) => (
+                    <OfferCard offer={prev} key={prev._id} />
+                  ))}
                 </TabsContent>
               </Tabs>
             </DrawerContent>

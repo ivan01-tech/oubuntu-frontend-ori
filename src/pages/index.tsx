@@ -13,7 +13,6 @@ import {
 import { Group } from "@/types/grupes";
 import { Spinner } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
 
 export default function Home() {
   const { isSuccess, data, isLoading, isError, error } = useQuery({

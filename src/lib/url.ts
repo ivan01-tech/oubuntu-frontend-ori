@@ -21,12 +21,16 @@ export const URLS = {
 
   GROUPS: {
     GET_ALL_USERS_QTY: "/groups/getUserProductQuantityGroupes",
+    GET_ALL_USERS_QTY_WITH_DETAILS: "/groups/getAllProductQty",
     GET: "/groups",
     GET_ALL_USERS_GROUPS: "/groups/getAllGroupsByUser",
     JOIN: (id: string) => "/groups/" + id + "/groupMenbers",
     ID: (id: string) => "/groups/" + id,
     PRODUCT_Quant: (id: string) => "/groups/" + id + "/productsQuantities/",
     PRODUCT_Quant_ALL: "/groups/getProductsQuantities/",
+  },
+  OFFERS: {
+    index: "/offers",
   },
 };
 // const OUBUNTU_BACKEND_URI_GRP = `${

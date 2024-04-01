@@ -1,10 +1,12 @@
 /* eslint-disable react/no-unescaped-entities */
+import TruncatedLink from "@/components/SearchComponents/Truncate";
 import MainLayout from "@/components/layouts/MainLayout";
 import OubuntuComponent from "@/components/pages/HomePage/OubuntuComponent";
 import CountdownTimer from "@/components/ui/CountdownTimer";
 import CustomImage from "@/components/ui/image";
 import { Progress } from "@/components/ui/progress";
 import { useUser } from "@/hooks/useUser";
+import { getGroupUrlFront } from "@/lib/getUrlGroupFront";
 import {
   calculateDiscountPercentage,
   getImageUrlOnLocal,
@@ -488,7 +490,11 @@ function ProductDeatilsPage({}: Props) {
                         {!ispenJ ? "Integrer le groupe" : "Veuillez patienter"}
                       </button>
                     ) : (
-                      <div className="flex justify-center items-start gap-4 flex-wrap">
+                      <div className="flex flex-col justify-center items-start gap-4 flex-wrap">
+                        <TruncatedLink
+                          maxLength={50}
+                          url={getGroupUrlFront(group._id)}
+                        />
                         <button
                           onClick={updateProductHnadler}
                           disabled={ispenUP}

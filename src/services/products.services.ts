@@ -70,6 +70,13 @@ export async function joinAGroup<Z>({
   });
 }
 
+export async function createAGroup<Z>(offer_id: string) {
+  return makeSucureRequest<Z>(URLS.GROUPS.GET, {
+    method: "POST",
+    data: { offer_id },
+  });
+}
+
 export async function updateProductQuantity<Z>({
   groupeId,
   offerId,

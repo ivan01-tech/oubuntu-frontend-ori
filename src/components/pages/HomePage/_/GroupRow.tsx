@@ -2,19 +2,47 @@ import { MapPin } from "lucide-react";
 import { Avatar, AvatarGroup } from "@chakra-ui/react";
 import Link from "next/link";
 import { Progress } from "@/components/ui/progress";
-type Props = {};
+import {
+  Group,
+  ProductQuantity,
+  ProductQuantityWithUserDetails,
+} from "@/types/grupes";
+import CountdownTimer from "@/components/ui/CountdownTimer";
+import { calculateDiscountPercentage } from "@/lib/isValidPhone";
+import { UserTypes } from "@/types/users";
 
-const GroupRow = (props: Props) => {
+type Props = {
+  group: Group;
+  users: UserTypes[];
+  quantyGrp: ProductQuantityWithUserDetails[];
+};
+
+const GroupRow = ({ group, users, quantyGrp }: Props) => {
+  const remainQty =
+    group.offer.product_quantity -
+    quantyGrp.reduce((sum, item) => sum + item.quantity, 0);
+
+  //
+  const groupProgression = calculateDiscountPercentage(
+    group.offer.product_quantity,
+    remainQty
+  );
   return (
-    <div className="flex flex-col cursor-pointer font-display space-y-2 rounded border border-gray-200 p-2">
+    <Link
+      href={"/groupes/" + group._id}
+      className="flex flex-col cursor-pointer font-display space-y-2 rounded border border-gray-200 p-2"
+    >
       <div className="flex justify-between">
         <div className="flex flex-col ">
           <p className="text-lg font-bold opacity-90">
             {" "}
-            Objectif: 300kg pour 10% de reduction{" "}
+            Objectif:{group.title}
           </p>
-          <p className=" text-md  font-display opacity-90"> 3200 XAF </p>
-          <p className="text-sm text-red-600"> 20kg restants </p>
+          <p className=" text-md  font-display opacity-90">
+            {" "}
+            {group.offer.discount_price} XAF{" "}
+          </p>
+          <p className="text-sm text-red-600"> {remainQty}kg restants </p>
         </div>
         <div className="flex flex-col space-y-2">
           <p className="flex justify-end text-right text-xs opacity-70">
@@ -22,31 +50,22 @@ const GroupRow = (props: Props) => {
             Douala{" "}
           </p>
           <div className="flex space-x-1">
-            <div className="p-1 w-8 h-8 text-xs flex justify-center items-center bg-red-500 text-white">
-              05h
-            </div>
-
-            <div className="p-1 w-8 h-8 text-xs flex justify-center items-center bg-red-500 text-white">
-              34m
-            </div>
-
-            <div className="p-1 w-8 h-8 text-xs flex justify-center items-center bg-red-500 text-white">
-              54s
-            </div>
+            <CountdownTimer expirationDate={group.expired_at} />
           </div>
         </div>
       </div>
-      <Progress value={54} />
+      <Progress value={groupProgression} />
       <div className="pb-2">
         <AvatarGroup size="sm" max={3}>
-          <Avatar name="Ryan Florence" src="https://bit.ly/ryan-florence" />
-          <Avatar name="Segun Adebayo" src="https://bit.ly/sage-adebayo" />
-          <Avatar name="Kent Dodds" src="https://bit.ly/kent-c-dodds" />
-          <Avatar name="Prosper Otemuyiwa" src="https://bit.ly/prosper-baba" />
-          <Avatar name="Christian Nwamba" src="https://bit.ly/code-beast" />
+          {users.map((user) => (
+            <Avatar
+              name={user.first_name + " " + user.last_name}
+              key={user._id}
+            />
+          ))}
         </AvatarGroup>
       </div>
-    </div>
+    </Link>
   );
 };
 
